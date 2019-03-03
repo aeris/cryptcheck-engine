@@ -1,0 +1,4 @@
+--format progress
+--format documentation --out .rspec_results
+--color
+--require spec_helper
