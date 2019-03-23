@@ -1,7 +1,8 @@
 require 'socket'
 
 class Socket < BasicSocket
-	def connect_timeout(timeout, addr, **kwargs)
+	def connect(addr, **kwargs)
+		timeout = kwargs.delete :timeout
 		retried = false
 		begin
 			self.connect_nonblock addr, **kwargs

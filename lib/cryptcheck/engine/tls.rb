@@ -1,12 +1,11 @@
-module Cryptcheck::Engine::Tls
-	class SslRecordHeader
-		def self.read(socket)
-			socket.read
-		end
+module Cryptcheck
+	module Engine
+		module Tls
+			class ProtocolError < StandardError
+			end
 
-		private
-
-		def initialize()
+			autoload :RecordHeader, 'cryptcheck/engine/tls/record_header'
+			autoload :Record, 'cryptcheck/engine/tls/record'
 		end
 	end
 end

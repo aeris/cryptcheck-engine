@@ -5,7 +5,8 @@ Dir[fixtures].each { |f| require f }
 
 module Cryptcheck
 	module Engine
-		class Error < StandardError;
-		end
+		autoload :Error, 'cryptcheck/engine/error'
+		autoload :DoubleHash, 'cryptcheck/engine/double_hash'
+		autoload :Tls, 'cryptcheck/engine/tls'
 	end
 end
