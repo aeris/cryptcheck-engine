@@ -1,6 +1,8 @@
 module Cryptcheck
 	module Engine
 		class DoubleHash
+			include Enumerable
+
 			def initialize(hash)
 				@hash    = hash.freeze
 				@inverse = hash.invert.freeze
@@ -8,6 +10,10 @@ module Cryptcheck
 
 			def [](key)
 				@hash[key]
+			end
+
+			def each(&block)
+				@hash.each &block
 			end
 
 			def inverse(key)

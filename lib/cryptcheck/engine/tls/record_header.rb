@@ -2,44 +2,43 @@ module Cryptcheck
 	module Engine
 		module Tls
 			class RecordHeader
-				CONTENT_TYPES = DoubleHash.new 0x14 => :change_cipher_spec,
-											   0x15 => :alert,
-											   0x16 => :handshake,
-											   0x17 => :application,
-											   0x18 => :heartbeat
+				# 0x14 => :change_cipher_spec
+				# 0x15 => :alert
+				# 0x17 => :application
+				# 0x18 => :heartbeat
+				CONTENT_TYPES = IdClasses.new(
+						Handshake, # 0x16
+				).freeze
 
-				VERSIONS = DoubleHash.new 0x0300 => :ssl_3_0,
+				VERSIONS = DoubleHash.new(0x0300 => :ssl_3_0,
 										  0x0301 => :tls_1_0,
 										  0x0302 => :tls_1_1,
 										  0x0303 => :tls_1_2,
-										  0x0304 => :tls_1_3
+										  0x0304 => :tls_1_3).freeze
 
-				def self.read(socket, timeout: nil)
-					tmp  = socket.recv_uint8 timeout: timeout
+				def self.read(socket, *args, **kwargs)
+					tmp  = socket.recv_uint8 *args, **kwargs
 					type = CONTENT_TYPES[tmp]
-					raise ProtocolError, "Unknown content type 0x#{tmp.to_s(16)}" unless type
+					raise ProtocolError, "Unknown content type 0x#{tmp.to_s 16}" unless type
 
-					tmp     = socket.recv_uint16 timeout: timeout
+					tmp     = socket.recv_uint16 *args, **kwargs
 					version = VERSIONS[tmp]
-					raise ProtocolError, "Unknown version 0x#{tmp.to_s(16)}" unless version
+					raise ProtocolError, "Unknown version 0x#{tmp.to_s 16}" unless version
 
-					length = socket.recv_uint16 timeout: timeout
+					length = socket.recv_uint16 *args, **kwargs
 
-					new type, version, length
+					self.new type, version, length
 				end
 
-				def write(socket, timeout: nil)
-					tmp  = self.type
-					type = CONTENT_TYPES.inverse tmp
-					raise ProtocolError, "Unknown content type #{tmp}" unless type
-					socket.send_uint8 type, timeout: timeout
+				def write(socket, *args, **kwargs)
+					socket.send_uint8 self.type::ID, *args, **kwargs
 
 					tmp     = self.version
 					version = VERSIONS.inverse tmp
 					raise ProtocolError, "Unknown version #{tmp}" unless version
-					socket.send_uint16 version, timeout: timeout
+					socket.send_uint16 version, *args, **kwargs
 
-					socket.send_uint16 self.length, timeout: timeout
+					socket.send_uint16 self.length, *args, **kwargs
 				end
 
 				attr_reader :type, :version, :length

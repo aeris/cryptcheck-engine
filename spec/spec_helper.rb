@@ -1,5 +1,6 @@
 require 'bundler/setup'
 require 'cryptcheck/engine'
+require 'cryptcheck/engine/mock_socket'
 
 require 'awesome_print'
 require 'colorize'
