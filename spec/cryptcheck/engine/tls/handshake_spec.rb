@@ -5,14 +5,14 @@ module Cryptcheck::Engine
 
 			describe '::read' do
 				it 'must read record' do
-					socket.init "\x00\x00\x00\x00"
+					socket.init '00 000000'
 					handshake = Handshake.read socket
 					expect(handshake).to be_a Handshake
 					expect(handshake.record).to be_a Handshake::HelloRequest
 				end
 
 				it 'must reject unknown record' do
-					socket.init "\xff\x00\x00\x00"
+					socket.init 'FF 000000'
 					expect { RecordHeader.read socket }.to raise_error ProtocolError, 'Unknown content type 0xff'
 				end
 			end
@@ -22,7 +22,7 @@ module Cryptcheck::Engine
 					record    = Handshake::HelloRequest.new
 					handshake = Handshake.new record
 					handshake.write socket
-					expect(socket.content).to eq "\x00\x00\x00\x00".b
+					expect(socket.content).to eq_hex '00 000000'
 				end
 			end
 		end

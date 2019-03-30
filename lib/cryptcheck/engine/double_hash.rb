@@ -3,7 +3,7 @@ module Cryptcheck
 		class DoubleHash
 			include Enumerable
 
-			def initialize(hash)
+			def initialize(hash = {})
 				@hash    = hash.freeze
 				@inverse = hash.invert.freeze
 			end

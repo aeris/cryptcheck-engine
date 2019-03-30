@@ -5,12 +5,12 @@ module Cryptcheck::Engine
 
 			describe '::read' do
 				it 'must read record' do
-					socket.init "\x16\x03\x00\x00\x03\x00\x00\x00\x00".b
+					socket.init '16 0300 0004 00 000000'
 					header, handshake = Tls.read socket
 
 					expect(header.type).to be Handshake
 					expect(header.version).to be :ssl_3_0
-					expect(header.length).to be 0x03
+					expect(header.length).to be 0x04
 
 					expect(handshake).to be_a Handshake
 					expect(handshake.record).to be_a Handshake::HelloRequest
@@ -22,7 +22,7 @@ module Cryptcheck::Engine
 					handshake_record = Handshake::HelloRequest.new
 					record           = Handshake.new handshake_record
 					Tls.write socket, :ssl_3_0, record
-					expect(socket.content).to eq "\x16\x03\x00\x00\x04\x00\x00\x00\x00".b
+					expect(socket.content).to eq_hex '16 0300 0004 00 000000'
 				end
 				# end
 				#

@@ -16,7 +16,7 @@ module Cryptcheck::Engine
 					it 'must write record' do
 						record = HelloRequest.new
 						record.write socket
-						expect(socket.content).to eq "".b
+						expect(socket.content).to eq_hex ''
 					end
 				end
 			end
