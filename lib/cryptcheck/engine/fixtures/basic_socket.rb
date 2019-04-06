@@ -21,6 +21,17 @@ class BasicSocket < IO
 		end
 	end
 
+	def collect(length)
+		results, read = [], 0
+		loop do
+			size, result = yield
+			results << result
+			read += size
+			break unless read < length
+		end
+		results
+	end
+
 	{
 			uint8:  [1, 'C'],
 			uint16: [2, 'S>'],

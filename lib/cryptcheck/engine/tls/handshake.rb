@@ -2,6 +2,7 @@ module Cryptcheck::Engine
 	module Tls
 		class Handshake
 			autoload :HelloRequest, 'cryptcheck/engine/tls/handshake/hello_request'
+			autoload :Extension, 'cryptcheck/engine/tls/handshake/extension'
 			autoload :ClientHello, 'cryptcheck/engine/tls/handshake/client_hello'
 
 			ID = 0x16

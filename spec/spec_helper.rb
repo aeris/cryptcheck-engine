@@ -1,4 +1,7 @@
 require 'bundler/setup'
+
+Dir[File.join __dir__, 'fixtures', '*.rb'].each { |file| require file }
+
 require 'cryptcheck/engine'
 require 'cryptcheck/engine/mock_socket'
 
@@ -29,8 +32,10 @@ require 'rspec/expectations'
 
 RSpec::Matchers.define :eq_hex do |expected|
 	match do |actual|
-		expected = Cryptcheck::Engine::MockSocket.from_hex expected
-		actual.b == expected.b
+		actual.b == expected.from_hex
+	end
+	failure_message do |actual|
+		"expected \"#{actual.to_hex}\" to eq hex \"#{expected}\""
 	end
 end
 
