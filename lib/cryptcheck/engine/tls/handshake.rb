@@ -19,37 +19,47 @@ module Cryptcheck::Engine
 					ClientHello, # 0x01
 			).freeze
 
-			def self.read(socket, *args, **kwargs)
-				tmp  = socket.recv_uint8 *args, **kwargs
+			def self.read(io)
+				read   = 0
+				r, tmp = io.read_uint8
+				read   += r
+
 				type = TYPES[tmp]
 				raise ProtocolError, "Unknown handshake type 0x#{tmp.to_s 16}" unless type
 
 				size = 0
 				3.times do
 					size *= 16
-					size += socket.recv_uint8 *args, **kwargs
+					r, t = io.read_uint8
+					read += r
+					size += t
 				end
 
-				record = type.read socket, *args, **kwargs
-				self.new record
+				r, record = type.read io
+				read      += r
+				record    = self.new record
+
+				[read, record]
 			end
 
-			def write(socket, *args, **kwargs)
-				socket.send_uint8 @record.class::ID, *args, **kwargs
-				size = @record.size
-				size = 3.times.collect { t = size % 16; size /= 16; t }.reverse
-				size.each { |s| socket.send_uint8 s, *args, **kwargs }
-				@record.write socket, *args, **kwargs
+			def write(io)
+				written = 0
+				io2     = StringIO.new
+				written += @record.write io2
+
+				written += io.write_uint8 @record.class::ID
+				size    = io2.size
+				size    = 3.times.collect { t = size % 16; size /= 16; t }.reverse
+				size.each { |s| written += io.write_uint8 s }
+				written += io.write io2.string
+
+				written
 			end
 
 			attr_reader :record
 
 			def initialize(record)
 				@record = record
-			end
-
-			def size
-				4 + @record.size
 			end
 		end
 	end

@@ -1,12 +1,14 @@
 module Cryptcheck::Engine
 	module Tls
 		RSpec.describe Tls do
-			let!(:socket) { MockSocket.new }
+			let!(:io) { MockIO.new }
 
 			describe '::read' do
 				it 'must read record' do
-					socket.init '16 0300 0004 00 000000'
-					header, handshake = Tls.read socket
+					io.init '16 0300 0004 00 000000'
+					read, header, handshake = Tls.read io
+
+					expect(read).to be 9
 
 					expect(header.type).to be Handshake
 					expect(header.version).to be :ssl_3_0
@@ -21,21 +23,10 @@ module Cryptcheck::Engine
 				it 'must write record' do
 					handshake_record = Handshake::HelloRequest.new
 					record           = Handshake.new handshake_record
-					Tls.write socket, :ssl_3_0, record
-					expect(socket.content).to eq_hex '16 0300 0004 00 000000'
+					written          = Tls.write io, :ssl_3_0, record
+					expect(written).to be 9
+					expect(io.string).to eq_hex '16 0300 0004 00 000000'
 				end
-				# end
-				#
-				# describe '#write' do
-				# 	it 'must write record' do
-				# 		socket.init "\x16\x03\x00\x00\x03\x01\x02\x03".b
-				# 		record = Handshake::HelloRequest.new
-				# 		Tls.write socket, :ssl_3_0, record
-				# 		header = RecordHeader.new Handshake::Record, 0x03
-				# 		# record = Handshake::Record.new "\x01\x02\x03".b
-				# 		# record.write socket
-				# 	end
-				# end
 			end
 		end
 	end

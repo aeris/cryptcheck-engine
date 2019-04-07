@@ -45,14 +45,14 @@ class BasicSocket < IO
 	}.each do |name, config|
 		size, type = config
 		class_eval <<-RUBY_EVAL, __FILE__, __LINE__ + 1
-			def recv_#{name}(*args, **kwargs)
-				data = self.recvmsg #{size}, *args, **kwargs
+			def read_#{name}
+				data = self.recvmsg #{size}
 				data.unpack('#{type}').first
 			end
 
-			def send_#{name}(value, *args, **kwargs)
+			def write_#{name}(value)
 				data = [value].pack '#{type}'
-				self.sendmsg data, *args, **kwargs
+				self.sendmsg data
 			end
 		RUBY_EVAL
 	end

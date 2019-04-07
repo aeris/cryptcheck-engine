@@ -9,32 +9,37 @@ module Cryptcheck::Engine
 							0x00 => :hostname
 					).freeze
 
-					def self.read(socket, *args, **kwargs)
-						length = socket.recv_uint16 *args, **kwargs
-						names  = socket.collect length do
-							tmp  = socket.recv_uint8 *args, **kwargs
-							type = NAME_TYPE[tmp]
+					def self.read(io)
+						read      = 0
+						r, length = io.read_uint16
+						read      += r
+						r, names  = io.collect length do
+							read2  = 0
+							r, tmp = io.read_uint8
+							read2  += r
+							type   = NAME_TYPE[tmp]
 							raise ProtocolError, "Unknown name type 0x#{tmp.to_s 16}" unless type
 
-							length   = socket.recv_uint16 *args, **kwargs
-							hostname = socket.recvmsg length, *args, **kwargs
-							name     = { type: type, hostname: hostname }
-							[3 + length, name]
+							r, hostname = io.read_data :uint16
+							read2       += r
+							name        = { type: type, hostname: hostname }
+							[read2, name]
 						end
-						self.new names
+						read      += r
+						names     = self.new names
+						[read, names]
 					end
 
-					def write(socket, *args, **kwargs)
-						size = self.size
-						socket.send_uint16 size - 2, *args, **kwargs
+					def write(io)
+						io2 = StringIO.new
 						@names.each do |name|
 							type = name[:type]
 							type = NAME_TYPE.inverse type
-							socket.send_uint8 type, *args, **kwargs
+							io2.write_uint8 type
 							hostname = name[:hostname]
-							socket.send_uint16 hostname.size, *args, **kwargs
-							socket.sendmsg hostname, *args, **kwargs
+							io2.write_data :uint16, hostname
 						end
+						io.write_data :uint16, io2.string
 					end
 
 					attr_reader :names
@@ -43,8 +48,8 @@ module Cryptcheck::Engine
 						@names = names
 					end
 
-					def size
-						@size ||= 2 + @names.collect { |n| 3 + n[:hostname].size }.inject(:+)
+					def self.build(*hostnames)
+						self.new hostnames.collect { |h| { type: :hostname, hostname: h } }
 					end
 				end
 			end

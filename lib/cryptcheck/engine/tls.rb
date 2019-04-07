@@ -7,18 +7,27 @@ module Cryptcheck
 			autoload :RecordHeader, 'cryptcheck/engine/tls/record_header'
 			autoload :Handshake, 'cryptcheck/engine/tls/handshake'
 
-			def self.read(socket, *args, **kwargs)
-				header = RecordHeader.read socket, *args, **kwargs
-				record = header.type.read socket, *args, **kwargs
-				[header, record]
+			def self.read(io)
+				read      = 0
+				r, header = RecordHeader.read io
+				read      += r
+				r, record = header.type.read io
+				read      += r
+				[read, header, record]
 			end
 
-			def self.write(socket, version, record, *args, **kwargs)
+			def self.write(io, version, record)
+				io2 = StringIO.new
+				record.write io2
+
 				type   = record.class
-				length = record.size
+				length = io2.size
 				header = RecordHeader.new type, version, length
-				header.write socket, *args, **kwargs
-				record.write socket, *args, **kwargs
+
+				written = 0
+				written += header.write io
+				written += io.write io2.string
+				written
 			end
 		end
 	end

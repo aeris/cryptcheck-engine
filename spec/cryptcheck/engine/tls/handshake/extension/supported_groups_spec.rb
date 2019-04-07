@@ -3,15 +3,16 @@ module Cryptcheck::Engine
 		class Handshake
 			class Extension
 				RSpec.describe SupportedGroup do
-					let!(:socket) { MockSocket.new }
+					let!(:io) { MockIO.new }
 
 					let!(:packet) { '0008 001d 0017 0018 0019' }
 					let!(:groups) { %i[x25519 secp256r1 secp384r1 secp521r1] }
 
 					describe '::read' do
 						it 'must read record' do
-							socket.init packet
-							extension = SupportedGroup.read socket
+							io.init packet
+							read, extension = SupportedGroup.read io
+							expect(read).to be 10
 							expect(extension).to be_a SupportedGroup
 							expect(extension.groups).to contain_exactly *groups
 						end
@@ -20,8 +21,9 @@ module Cryptcheck::Engine
 					describe ' #write' do
 						it 'must write record' do
 							extension = SupportedGroup.new groups
-							extension.write socket
-							expect(socket.content).to eq_hex packet
+							written   = extension.write io
+							expect(written).to be 10
+							expect(io.string).to eq_hex packet
 						end
 					end
 				end

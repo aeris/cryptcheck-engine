@@ -10,33 +10,44 @@ module Cryptcheck::Engine
 						SupportedGroup
 				).freeze
 
-				def self.read(socket, *args, **kwargs)
-					id     = socket.recv_uint16 *args, **kwargs
-					length = socket.recv_uint16 *args, **kwargs
+				def self.read(io)
+					read      = 0
+					r, id     = io.read_uint16
+					read      += r
+					r, length = io.read_uint16
+					read      += r
 
-					clazz = EXTENSIONS[id]
-					if clazz
-						clazz.read socket, *args, **kwargs
-					else
-						data = socket.recvmsg length, *args, **kwargs
-						Extension.new id, data
-					end
+					clazz        = EXTENSIONS[id]
+					r, extension = if clazz
+									   clazz.read io
+								   else
+									   data      = io.read length
+									   extension = Extension.new id, data
+									   [length, extension]
+								   end
+					read         += r
+
+					[read, extension]
 				end
 
-				def self.write(extension, socket, *args, **kwargs)
-					# binding.pry
-					id = if extension.is_a? Extension
-							 extension.id
-						 else
-							 extension.class::ID
-						 end
-					socket.send_uint16 id, *args, **kwargs
-					socket.send_uint16 extension.size, *args, **kwargs
-					extension.write socket, *args, **kwargs
+				def self.write(io, extension)
+					io2 = StringIO.new
+					extension.write io2
+
+					id      = case extension
+							  when Extension
+								  extension.id
+							  else
+								  extension.class::ID
+							  end
+					written = 0
+					written += io.write_uint16 id
+					written += io.write_data :uint16, io2.string
+					written
 				end
 
-				def write(socket, *args, **kwargs)
-					socket.sendmsg @data, *args, **kwargs
+				def write(io)
+					io.write @data
 				end
 
 				attr_reader :id, :data
@@ -44,10 +55,6 @@ module Cryptcheck::Engine
 				def initialize(id, data)
 					@id   = id
 					@data = data
-				end
-
-				def size
-					@size ||= @data.size
 				end
 			end
 		end

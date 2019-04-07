@@ -16,29 +16,36 @@ module Cryptcheck
 										  0x0303 => :tls_1_2,
 										  0x0304 => :tls_1_3).freeze
 
-				def self.read(socket, *args, **kwargs)
-					tmp  = socket.recv_uint8 *args, **kwargs
-					type = CONTENT_TYPES[tmp]
+				def self.read(io)
+					read   = 0
+					r, tmp = io.read_uint8
+					read   += r
+					type   = CONTENT_TYPES[tmp]
 					raise ProtocolError, "Unknown content type 0x#{tmp.to_s 16}" unless type
 
-					tmp     = socket.recv_uint16 *args, **kwargs
+					r, tmp  = io.read_uint16
+					read    += r
 					version = VERSIONS[tmp]
 					raise ProtocolError, "Unknown version 0x#{tmp.to_s 16}" unless version
 
-					length = socket.recv_uint16 *args, **kwargs
+					r, length = io.read_uint16
+					read      += r
 
-					self.new type, version, length
+					header = self.new type, version, length
+					[read, header]
 				end
 
-				def write(socket, *args, **kwargs)
-					socket.send_uint8 self.type::ID, *args, **kwargs
+				def write(io)
+					written = 0
+					written += io.write_uint8 self.type::ID
 
 					tmp     = self.version
 					version = VERSIONS.inverse tmp
 					raise ProtocolError, "Unknown version #{tmp}" unless version
-					socket.send_uint16 version, *args, **kwargs
+					written += io.write_uint16 version
 
-					socket.send_uint16 self.length, *args, **kwargs
+					written += io.write_uint16 self.length
+					written
 				end
 
 				attr_reader :type, :version, :length
