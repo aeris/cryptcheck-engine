@@ -3,7 +3,7 @@ module Cryptcheck::Engine
 		class Handshake
 			class Extension
 				class ServerName
-					ID = 0x0000
+					ID = :server_name
 
 					NAME_TYPE = DoubleHash.new(
 							0x00 => :hostname

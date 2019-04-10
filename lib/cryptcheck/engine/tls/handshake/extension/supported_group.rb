@@ -3,7 +3,7 @@ module Cryptcheck::Engine
 		class Handshake
 			class Extension
 				class SupportedGroup
-					ID = 0x000A
+					ID = :supported_groups
 
 					GROUPS = DoubleHash.new({
 													0x0001 => :sect163k1,

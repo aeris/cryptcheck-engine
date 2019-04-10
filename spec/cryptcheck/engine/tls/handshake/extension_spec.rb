@@ -24,7 +24,7 @@ module Cryptcheck::Engine
 						read, extension = Extension.read io
 						expect(read).to be 22
 						expect(extension).to be_a Extension
-						expect(extension.id).to eq raw_id
+						expect(extension.id).to eq :padding
 						expect(extension.data).to eq_hex raw_data
 					end
 				end
@@ -32,14 +32,14 @@ module Cryptcheck::Engine
 				describe '#write' do
 					it 'must write supported record' do
 						extension = Extension::ServerName.new server_name_names
-						written = Extension.write io, extension
+						written   = Extension.write io, extension
 						expect(written).to be 22
 						expect(io.string).to eq_hex server_name_packet
 					end
 
 					it 'must write unsupported record' do
-						extension = Extension.new raw_id, raw_data.from_hex
-						written = Extension.write io, extension
+						extension = Extension.new :padding, raw_data.from_hex
+						written   = Extension.write io, extension
 						expect(written).to be 22
 						expect(io.string).to eq_hex raw_packet
 					end
