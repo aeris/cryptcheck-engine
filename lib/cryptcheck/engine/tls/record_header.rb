@@ -21,12 +21,12 @@ module Cryptcheck
 					r, tmp = io.read_uint8
 					read   += r
 					type   = CONTENT_TYPES[tmp]
-					raise ProtocolError, "Unknown content type 0x#{tmp.to_s 16}" unless type
+					raise ProtocolError, 'Unknown content type 0x%02X' % tmp unless type
 
 					r, tmp  = io.read_uint16
 					read    += r
 					version = VERSIONS[tmp]
-					raise ProtocolError, "Unknown version 0x#{tmp.to_s 16}" unless version
+					raise ProtocolError, 'Unknown version 0x%04X' % tmp unless version
 
 					r, length = io.read_uint16
 					read      += r

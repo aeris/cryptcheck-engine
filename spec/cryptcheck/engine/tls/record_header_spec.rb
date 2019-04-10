@@ -15,12 +15,12 @@ module Cryptcheck::Engine
 
 				it 'must reject invalid content type' do
 					io.init 'FF 0300 8182'
-					expect { RecordHeader.read io }.to raise_error ProtocolError, 'Unknown content type 0xff'
+					expect { RecordHeader.read io }.to raise_error ProtocolError, 'Unknown content type 0xFF'
 				end
 
 				it 'must reject invalid version' do
 					io.init '16 FFFF 8182'
-					expect { RecordHeader.read io }.to raise_error ProtocolError, 'Unknown version 0xffff'
+					expect { RecordHeader.read io }.to raise_error ProtocolError, 'Unknown version 0xFFFF'
 				end
 			end
 

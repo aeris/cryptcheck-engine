@@ -4,12 +4,12 @@ module Cryptcheck::Engine
 			RSpec.describe Extension do
 				let!(:io) { MockIO.new }
 
-				let!(:server_name_packet) { '0000 0012 0010 00 000d 6372797074636865636b2e6672' }
+				let!(:server_name_packet) { '0000 0012 0010 00 000D 6372797074636865636B2e6672' }
 				let!(:server_name_names) { [{ type: :hostname, hostname: 'cryptcheck.fr' }] }
 
-				let!(:raw_id) { 'ffff'.to_i 16 }
-				let!(:raw_data) { '001000000d6372797074636865636b2e6672' }
-				let!(:raw_packet) { ('%04x' % raw_id) + '0012' + raw_data }
+				let!(:raw_id) { '0015'.to_i 16 }
+				let!(:raw_data) { '001000000D6372797074636865636B2e6672' }
+				let!(:raw_packet) { ('%04X' % raw_id) + '0012' + raw_data }
 
 				describe '::read' do
 					it 'must read supported record' do

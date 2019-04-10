@@ -425,7 +425,7 @@ module Cryptcheck::Engine
 					r, ciphers = io.collect length do
 						r, tmp = io.read_uint16
 						cipher = CIPHERS[tmp]
-						raise ProtocolError, "Unknown cipher 0x#{tmp.to_s 16}" unless cipher
+						raise ProtocolError, 'Unknown cipher 0x%04X' % tmp unless cipher
 						[r, cipher]
 					end
 					read       += r
@@ -448,7 +448,7 @@ module Cryptcheck::Engine
 					r, compressions = io.collect length do
 						r, tmp      = io.read_uint8
 						compression = COMPRESSIONS[tmp]
-						raise ProtocolError, "Unknown compression 0x#{tmp.to_s 16}" unless compression
+						raise ProtocolError, 'Unknown compression 0x%02X' % tmp unless compression
 						[r, compression]
 					end
 					read            += r

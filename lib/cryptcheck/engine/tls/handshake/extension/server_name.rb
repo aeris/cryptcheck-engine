@@ -18,7 +18,7 @@ module Cryptcheck::Engine
 							r, tmp = io.read_uint8
 							read2  += r
 							type   = NAME_TYPE[tmp]
-							raise ProtocolError, "Unknown name type 0x#{tmp.to_s 16}" unless type
+							raise ProtocolError, 'Unknown name type 0x%02X' % tmp unless type
 
 							r, hostname = io.read_data :uint16
 							read2       += r

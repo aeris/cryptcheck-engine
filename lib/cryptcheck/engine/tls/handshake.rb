@@ -25,7 +25,7 @@ module Cryptcheck::Engine
 				read   += r
 
 				type = TYPES[tmp]
-				raise ProtocolError, "Unknown handshake type 0x#{tmp.to_s 16}" unless type
+				raise ProtocolError, 'Unknown handshake type 0x%04X' % tmp unless type
 
 				size = 0
 				3.times do
@@ -49,7 +49,7 @@ module Cryptcheck::Engine
 
 				written += io.write_uint8 @record.class::ID
 				size    = io2.size
-				size = 3.times.collect { t = size % 256; size /= 256; t }.reverse
+				size    = 3.times.collect { t = size % 256; size /= 256; t }.reverse
 				size.each { |s| written += io.write_uint8 s }
 				written += io.write io2.string
 

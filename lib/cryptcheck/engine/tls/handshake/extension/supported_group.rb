@@ -62,7 +62,7 @@ module Cryptcheck::Engine
 						r, groups = io.collect length do
 							r, tmp = io.read_uint16
 							group  = GROUPS[tmp]
-							raise ProtocolError, "Unknown group 0x#{tmp.to_s 16}" unless group
+							raise ProtocolError, 'Unknown group 0x%04X' % tmp unless group
 							[r, group]
 						end
 						read      += r
