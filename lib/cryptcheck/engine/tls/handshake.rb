@@ -29,7 +29,7 @@ module Cryptcheck::Engine
 
 				size = 0
 				3.times do
-					size *= 16
+					size *= 256
 					r, t = io.read_uint8
 					read += r
 					size += t
@@ -49,7 +49,7 @@ module Cryptcheck::Engine
 
 				written += io.write_uint8 @record.class::ID
 				size    = io2.size
-				size    = 3.times.collect { t = size % 16; size /= 16; t }.reverse
+				size = 3.times.collect { t = size % 256; size /= 256; t }.reverse
 				size.each { |s| written += io.write_uint8 s }
 				written += io.write io2.string
 
