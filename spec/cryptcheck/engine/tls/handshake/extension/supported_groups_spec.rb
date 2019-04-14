@@ -2,7 +2,7 @@ module Cryptcheck::Engine
 	module Tls
 		class Handshake
 			class Extension
-				RSpec.describe SupportedGroup do
+				RSpec.describe SupportedGroups do
 					let!(:io) { MockIO.new }
 
 					let!(:packet) { '0008 001d 0017 0018 0019' }
@@ -11,16 +11,16 @@ module Cryptcheck::Engine
 					describe '::read' do
 						it 'must read record' do
 							io.init packet
-							read, extension = SupportedGroup.read io
+							read, extension = SupportedGroups.read io
 							expect(read).to be 10
-							expect(extension).to be_a SupportedGroup
+							expect(extension).to be_a SupportedGroups
 							expect(extension.groups).to contain_exactly *groups
 						end
 					end
 
 					describe ' #write' do
 						it 'must write record' do
-							extension = SupportedGroup.new groups
+							extension = SupportedGroups.new groups
 							written   = extension.write io
 							expect(written).to be 10
 							expect(io.string).to eq_hex packet

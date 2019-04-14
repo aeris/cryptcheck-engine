@@ -2,7 +2,7 @@ module Cryptcheck::Engine
 	module Tls
 		class Handshake
 			class Extension
-				class SupportedGroup
+				class SupportedGroups
 					ID = :supported_groups
 
 					GROUPS = DoubleHash.new({
@@ -87,6 +87,10 @@ module Cryptcheck::Engine
 
 					def initialize(groups)
 						@groups = groups
+					end
+
+					def self.build(*curves)
+						self.new curves
 					end
 				end
 			end
