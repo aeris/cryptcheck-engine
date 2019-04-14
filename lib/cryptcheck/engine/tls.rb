@@ -4,13 +4,17 @@ module Cryptcheck
 			class ProtocolError < StandardError
 			end
 
-			VERSIONS = DoubleHash.new(0x0300 => :ssl_3_0,
-									  0x0301 => :tls_1_0,
-									  0x0302 => :tls_1_1,
-									  0x0303 => :tls_1_2,
-									  0x0304 => :tls_1_3).freeze
+			# region Versions
+			VERSIONS = DoubleHash.new(
+					0x0300 => :ssl_3_0,
+					0x0301 => :tls_1_0,
+					0x0302 => :tls_1_1,
+					0x0303 => :tls_1_2,
+					0x0304 => :tls_1_3
+			).freeze
+			# endregion
 
-			# region Ciphers
+			# region Cipher suites
 			CIPHERS = DoubleHash.new(
 					0x0000 => :TLS_NULL_WITH_NULL_NULL,
 					0x0001 => :TLS_RSA_WITH_NULL_MD5,
@@ -363,7 +367,7 @@ module Cryptcheck
 					0x00 => :NULL,
 					0x01 => :DEFLATE,
 					0x64 => :LZS
-			)
+			).freeze
 
 			# region Groups
 			GROUPS = DoubleHash.new(
@@ -415,6 +419,56 @@ module Cryptcheck
 					0xFF01 => :arbitrary_explicit_prime_curves,
 					0xFF02 => :arbitrary_explicit_char2_curves,
 			).freeze
+			# endregion
+
+			# region Signature algorithms
+			SIGNATURE_ALGORITHMS = DoubleHash.new(
+					0x00 => :anonymous,
+					0x01 => :rsa,
+					0x02 => :dsa,
+					0x03 => :ecdsa,
+					0x07 => :ed25519,
+					0x08 => :ed448,
+					0x40 => :gostr34102012_256,
+					0x41 => :gostr34102012_512
+			).freeze
+			# endregion
+
+			# region Hash algorithms
+			HASH_ALGORITHMS = DoubleHash.new(
+					0x00 => :none,
+					0x01 => :md5,
+					0x02 => :sha1,
+					0x03 => :sha224,
+					0x04 => :sha256,
+					0x05 => :sha384,
+					0x06 => :sha512,
+					0x08 => :Intrinsic,
+			).freeze
+			# endregion
+
+			# region Signature schemes
+			SIGNATURE_SCHEMES = DoubleHash.new(
+					0x0201 => :rsa_pkcs1_sha1,
+					0x0203 => :ecdsa_sha1,
+					0x0401 => :rsa_pkcs1_sha256,
+					0x0403 => :ecdsa_secp256r1_sha256,
+					0x0501 => :rsa_pkcs1_sha384,
+					0x0503 => :ecdsa_secp384r1_sha384,
+					0x0601 => :rsa_pkcs1_sha512,
+					0x0603 => :ecdsa_secp521r1_sha512,
+					0x0804 => :rsa_pss_rsae_sha256,
+					0x0805 => :rsa_pss_rsae_sha384,
+					0x0806 => :rsa_pss_rsae_sha512,
+					0x0807 => :ed25519,
+					0x0808 => :ed448,
+					0x0809 => :rsa_pss_pss_sha256,
+					0x080A => :rsa_pss_pss_sha384,
+					0x080B => :rsa_pss_pss_sha512,
+					0x081A => :ecdsa_brainpoolP256r1_sha256,
+					0x081B => :ecdsa_brainpoolP384r1_sha384,
+					0x081C => :ecdsa_brainpoolP512r1_sha512,
+			)
 			# endregion
 
 			autoload :RecordHeader, 'cryptcheck/engine/tls/record_header'
