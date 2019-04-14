@@ -10,12 +10,6 @@ module Cryptcheck
 						Handshake, # 0x16
 				).freeze
 
-				VERSIONS = DoubleHash.new(0x0300 => :ssl_3_0,
-										  0x0301 => :tls_1_0,
-										  0x0302 => :tls_1_1,
-										  0x0303 => :tls_1_2,
-										  0x0304 => :tls_1_3).freeze
-
 				def self.read(io)
 					read   = 0
 					r, tmp = io.read_uint8
