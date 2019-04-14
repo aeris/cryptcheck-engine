@@ -14,7 +14,7 @@ module Cryptcheck::Engine
 							read, extension = ServerName.read io
 							expect(read).to be 18
 							expect(extension).to be_a ServerName
-							expect(extension.names).to contain_exactly *names
+							expect(extension.names).to eq names
 						end
 					end
 

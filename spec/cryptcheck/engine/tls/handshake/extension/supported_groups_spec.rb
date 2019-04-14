@@ -14,7 +14,7 @@ module Cryptcheck::Engine
 							read, extension = SupportedGroups.read io
 							expect(read).to be 10
 							expect(extension).to be_a SupportedGroups
-							expect(extension.groups).to contain_exactly *groups
+							expect(extension.groups).to eq groups
 						end
 					end
 
