@@ -4,10 +4,12 @@ module Cryptcheck::Engine
 			class Extension
 				autoload :ServerName, 'cryptcheck/engine/tls/handshake/extension/server_name'
 				autoload :SupportedGroups, 'cryptcheck/engine/tls/handshake/extension/supported_groups'
+				autoload :SupportedVersions, 'cryptcheck/engine/tls/handshake/extension/supported_versions'
 
 				EXTENSIONS = IdClasses.new(
 						ServerName,
-						SupportedGroups
+						SupportedGroups,
+						SupportedVersions
 				).freeze
 				TYPES      = DoubleHash.new({
 													0x0000 => :server_name,
