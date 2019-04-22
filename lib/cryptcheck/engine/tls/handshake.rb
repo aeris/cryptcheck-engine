@@ -4,9 +4,9 @@ module Cryptcheck::Engine
 			autoload :HelloRequest, 'cryptcheck/engine/tls/handshake/hello_request'
 			autoload :Extension, 'cryptcheck/engine/tls/handshake/extension'
 			autoload :ClientHello, 'cryptcheck/engine/tls/handshake/client_hello'
+			autoload :ServerHello, 'cryptcheck/engine/tls/handshake/server_hello'
 
 			ID = 0x16
-			# 0x02 => :server_hello,
 			# 0x0b => :certificate,
 			# 0x0c => :server_key_exchange,
 			# 0x0d => :certificate_request,
@@ -17,6 +17,7 @@ module Cryptcheck::Engine
 			TYPES = IdClasses.new(
 					HelloRequest, # 0x00
 					ClientHello, # 0x01
+					ServerHello, # 0x02
 			).freeze
 
 			def self.read(io)
