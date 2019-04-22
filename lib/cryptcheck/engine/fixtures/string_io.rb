@@ -1,7 +1,6 @@
 require 'stringio'
 
-class
-StringIO
+class StringIO
 	{
 			uint8:  [1, 'C'],
 			uint16: [2, 'S>'],
@@ -28,6 +27,7 @@ StringIO
 		RUBY_EVAL
 
 		def write_data(type, data)
+			data    ||= ''
 			data    = data.b
 			written = 0
 			size    = data.size
@@ -40,9 +40,14 @@ StringIO
 			read      = 0
 			r, length = self.send "read_#{type}"
 			read      += r
-			data      = self.read length
-			read      += length
-			[read, data.b]
+			data      = if length == 0
+							nil
+						else
+							data = self.read length
+							read += length
+							data.b
+						end
+			[read, data]
 		end
 	end
 

@@ -125,13 +125,12 @@ module Cryptcheck::Engine
 				class Builder
 					def initialize
 						@ciphers      = []
-						@compressions = [:NULL]
+						@compressions = %i[NULL]
 						@extensions   = []
 					end
 
 					def get
-						@random  ||= SecureRandom.bytes 32
-						@session ||= ''
+						@random ||= SecureRandom.bytes 32
 						ClientHello.new @version, @random, @session, @ciphers, @compressions, @extensions
 					end
 
