@@ -8,11 +8,11 @@ module Cryptcheck::Engine
 					io.init '16 0300 0004 00 000000'
 					read, header, handshake = Tls.read io
 
-					expect(read).to be 9
+					expect(read).to eq 9
 
-					expect(header.type).to be Handshake
-					expect(header.version).to be :ssl_3_0
-					expect(header.length).to be 0x04
+					expect(header.type).to eq Handshake
+					expect(header.version).to eq :ssl_3_0
+					expect(header.length).to eq 0x04
 
 					expect(handshake).to be_a Handshake
 					expect(handshake.record).to be_a Handshake::HelloRequest
@@ -24,7 +24,7 @@ module Cryptcheck::Engine
 					handshake_record = Handshake::HelloRequest.new
 					record           = Handshake.new handshake_record
 					written          = Tls.write io, :ssl_3_0, record
-					expect(written).to be 9
+					expect(written).to eq 9
 					expect(io.string).to eq_hex '16 0300 0004 00 000000'
 				end
 			end

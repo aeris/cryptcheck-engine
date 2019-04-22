@@ -35,7 +35,7 @@ module Cryptcheck::Engine
 					it 'must read record' do
 						io.init packet
 						read, record = ClientHello.read io
-						expect(read).to be 511
+						expect(read).to eq 511
 						expect(record).to be_a ClientHello
 					end
 				end
@@ -55,7 +55,7 @@ module Cryptcheck::Engine
 							extension Extension::ServerName.build 'cryptcheck.fr'
 						}
 						written = record.write io
-						expect(written).to be 107
+						expect(written).to eq 107
 						expect(io.string).to eq_hex <<~HEREDOC
 						    0303
 						    d2fd9f45420f2aee2f2066b1bf44f939a382ccf734277107412d091891aecbe4

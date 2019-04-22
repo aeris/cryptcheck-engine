@@ -18,7 +18,7 @@ module Cryptcheck::Engine
 						it 'must read record' do
 							io.init packet
 							read, extension = SignatureAlgorithms.read io
-							expect(read).to be 24
+							expect(read).to eq 24
 							expect(extension).to be_a SignatureAlgorithms
 							expect(extension.signs).to eq signs
 						end
@@ -28,7 +28,7 @@ module Cryptcheck::Engine
 						it 'must write record' do
 							extension = SignatureAlgorithms.new signs
 							written   = extension.write io
-							expect(written).to be 24
+							expect(written).to eq 24
 							expect(io.string).to eq_hex packet
 						end
 					end

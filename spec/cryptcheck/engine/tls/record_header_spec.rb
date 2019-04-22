@@ -7,10 +7,10 @@ module Cryptcheck::Engine
 				it 'must read header' do
 					io.init '16 0300 8182'
 					read, header = RecordHeader.read io
-					expect(read).to be 5
-					expect(header.type).to be Handshake
-					expect(header.version).to be :ssl_3_0
-					expect(header.length).to be 0x8182
+					expect(read).to eq 5
+					expect(header.type).to eq Handshake
+					expect(header.version).to eq :ssl_3_0
+					expect(header.length).to eq 0x8182
 				end
 
 				it 'must reject invalid content type' do
@@ -28,7 +28,7 @@ module Cryptcheck::Engine
 				it 'must write header' do
 					header  = RecordHeader.new Handshake, :ssl_3_0, 0x8182
 					written = header.write io
-					expect(written).to be 5
+					expect(written).to eq 5
 					expect(io.string).to eq_hex '16 0300 8182'
 				end
 			end

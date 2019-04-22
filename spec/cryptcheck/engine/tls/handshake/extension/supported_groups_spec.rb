@@ -12,7 +12,7 @@ module Cryptcheck::Engine
 						it 'must read record' do
 							io.init packet
 							read, extension = SupportedGroups.read io
-							expect(read).to be 10
+							expect(read).to eq 10
 							expect(extension).to be_a SupportedGroups
 							expect(extension.groups).to eq groups
 						end
@@ -22,7 +22,7 @@ module Cryptcheck::Engine
 						it 'must write record' do
 							extension = SupportedGroups.new groups
 							written   = extension.write io
-							expect(written).to be 10
+							expect(written).to eq 10
 							expect(io.string).to eq_hex packet
 						end
 					end
