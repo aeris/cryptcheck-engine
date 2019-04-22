@@ -14,6 +14,19 @@ module Cryptcheck
 			).freeze
 			# endregion
 
+			def self.read_version(io)
+				r, tmp  = io.read_uint16
+				version = VERSIONS[tmp]
+				raise ProtocolError, 'Unknown client version 0x%02X' % tmp unless version
+				[r, version]
+			end
+
+			def self.write_version(io, version)
+				tmp = VERSIONS.inverse version
+				raise ProtocolError, 'Unknown client version %s' % version unless tmp
+				io.write_uint16 tmp
+			end
+
 			# region Cipher suites
 			CIPHERS = DoubleHash.new(
 					0x0000 => :TLS_NULL_WITH_NULL_NULL,
@@ -363,11 +376,67 @@ module Cryptcheck
 			).freeze
 			# endregion
 
+			def self.read_cipher(io)
+				r, tmp = io.read_uint16
+				cipher = CIPHERS[tmp]
+				raise ProtocolError, 'Unknown cipher 0x%04X' % tmp unless cipher
+				[r, cipher]
+			end
+
+			def self.read_ciphers(io)
+				read       = 0
+				r, length  = io.read_uint16
+				read       += r
+				r, ciphers = io.collect(length) { self.read_cipher io }
+				read       += r
+				[read, ciphers]
+			end
+
+			def self.write_cipher(io, cipher)
+				tmp = CIPHERS.inverse cipher
+				raise ProtocolError, 'Unknown cipher %s' % cipher unless tmp
+				io.write_uint16 tmp
+			end
+
+			def self.write_ciphers(io, ciphers)
+				io2 = StringIO.new
+				ciphers.each { |c| self.write_cipher io2, c }
+				io.write_data :uint16, io2.string
+			end
+
 			COMPRESSIONS = DoubleHash.new(
 					0x00 => :NULL,
 					0x01 => :DEFLATE,
 					0x64 => :LZS
 			).freeze
+
+			def self.read_compression(io)
+				r, tmp      = io.read_uint8
+				compression = COMPRESSIONS[tmp]
+				raise ProtocolError, 'Unknown compression 0x%02X' % tmp unless compression
+				[r, compression]
+			end
+
+			def self.read_compressions(io)
+				read            = 0
+				r, length       = io.read_uint8
+				read            += r
+				r, compressions = io.collect(length) { self.read_compression io }
+				read            += r
+				[read, compressions]
+			end
+
+			def self.write_compression(io, compression)
+				tmp = COMPRESSIONS.inverse compression
+				raise ProtocolError, 'Unknown compression %s' % compression unless tmp
+				io.write_uint8 tmp
+			end
+
+			def self.write_compressions(io, compressions)
+				io2 = StringIO.new
+				compressions.each { |c| self.write_compression io2, c }
+				io.write_data :uint8, io2.string
+			end
 
 			# region Groups
 			GROUPS = DoubleHash.new(

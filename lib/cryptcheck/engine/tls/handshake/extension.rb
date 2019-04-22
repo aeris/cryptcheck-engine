@@ -86,6 +86,18 @@ module Cryptcheck::Engine
 					[read, extension]
 				end
 
+				def self.read_all(io)
+					read          = 0
+					r, length     = io.read_uint16
+					read          += r
+					r, extensions = io.collect length do
+						r, extension = self.read io
+						[r, extension]
+					end
+					read          += r
+					[read, extensions]
+				end
+
 				def self.write(io, extension)
 					io2 = StringIO.new
 					extension.write io2
@@ -101,6 +113,12 @@ module Cryptcheck::Engine
 					written += io.write_uint16 id
 					written += io.write_data :uint16, io2.string
 					written
+				end
+
+				def self.write_all(io, extensions)
+					io2 = StringIO.new
+					extensions.each { |e| self.write io2, e }
+					io.write_data :uint16, io2.string
 				end
 
 				def write(io)
