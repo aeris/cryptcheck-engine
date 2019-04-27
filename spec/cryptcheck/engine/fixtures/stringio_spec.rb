@@ -1,7 +1,7 @@
 RSpec.describe StringIO do
 	describe '#read_data' do
 		it 'must read nil' do
-			s          = StringIO.new '00'.from_hex
+			s          = klass.new '00'.from_hex
 			read, data = s.read_data :uint8
 			expect(read).to eq 1
 			expect(data).to be_nil
@@ -10,7 +10,7 @@ RSpec.describe StringIO do
 
 	describe '#write_data' do
 		it 'must write nil' do
-			s       = StringIO.new
+			s       = klass.new
 			written = s.write_data :uint8, nil
 			expect(written).to eq 1
 			expect(s.string).to eq_hex '00'

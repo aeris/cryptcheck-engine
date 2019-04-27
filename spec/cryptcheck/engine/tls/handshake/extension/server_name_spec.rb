@@ -11,7 +11,7 @@ module Cryptcheck::Engine
 					describe '::read' do
 						it 'must read record' do
 							io.init packet
-							read, extension = ServerName.read io
+							read, extension = klass.read io
 							expect(read).to eq 18
 							expect(extension).to be_a ServerName
 							expect(extension.names).to eq names
@@ -20,7 +20,7 @@ module Cryptcheck::Engine
 
 					describe ' #write' do
 						it 'must write record' do
-							extension = ServerName.new names
+							extension = klass.new names
 							written   = extension.write io
 							expect(written).to eq 18
 							expect(io.string).to eq_hex packet

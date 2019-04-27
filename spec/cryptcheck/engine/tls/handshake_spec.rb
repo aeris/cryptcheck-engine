@@ -6,10 +6,10 @@ module Cryptcheck::Engine
 			describe '::read' do
 				it 'must read record' do
 					io.init '00 000000'
-					read, handshake = Handshake.read io
+					read, handshake = klass.read io
 					expect(read).to eq 4
 					expect(handshake).to be_a Handshake
-					expect(handshake.record).to be_a Handshake::HelloRequest
+					expect(handshake.record).to be_a klass::HelloRequest
 				end
 
 				it 'must reject unknown record' do
@@ -20,9 +20,9 @@ module Cryptcheck::Engine
 
 			describe '#write' do
 				it 'must write record' do
-					record    = Handshake::HelloRequest.new
-					handshake = Handshake.new record
-					written = handshake.write io
+					record    = klass::HelloRequest.new
+					handshake = klass.new record
+					written   = handshake.write io
 					expect(written).to eq 4
 					expect(io.string).to eq_hex '00 000000'
 				end

@@ -11,7 +11,7 @@ module Cryptcheck::Engine
 					describe '::read' do
 						it 'must read record' do
 							io.init packet
-							read, extension = SupportedVersions.read io
+							read, extension = klass.read io
 							expect(read).to eq 9
 							expect(extension).to be_a SupportedVersions
 							expect(extension.versions).to eq versions
@@ -20,7 +20,7 @@ module Cryptcheck::Engine
 
 					describe ' #write' do
 						it 'must write record' do
-							extension = SupportedVersions.new versions
+							extension = klass.new versions
 							written   = extension.write io
 							expect(written).to eq 9
 							expect(io.string).to eq_hex packet

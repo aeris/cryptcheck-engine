@@ -34,7 +34,7 @@ module Cryptcheck::Engine
 				describe '::read' do
 					it 'must read record' do
 						io.init packet
-						read, record = ClientHello.read io
+						read, record = klass.read io
 						expect(read).to eq 511
 						expect(record).to be_a ClientHello
 					end
@@ -42,7 +42,7 @@ module Cryptcheck::Engine
 
 				describe '#write' do
 					it 'must write record' do
-						record  = ClientHello.build {
+						record  = klass.build {
 							version :tls_1_2
 							random 'd2fd9f45420f2aee2f2066b1bf44f939a382ccf734277107412d091891aecbe4'.from_hex
 							session '2c29c80d4f5e8876a5c52bdc9bdfd811b43602f92d54c5cc0d3a435bec9a6549'.from_hex

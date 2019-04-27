@@ -1,4 +1,4 @@
-module Helpers
+helper = Module.new do
 	def do_in_background(process)
 		threads = []
 
@@ -52,3 +52,5 @@ module Helpers
 		do_in_server echo, *args, &block
 	end
 end
+
+RSpec.configure { |c| c.include helper }

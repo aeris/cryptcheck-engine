@@ -6,7 +6,7 @@ module Cryptcheck::Engine
 			describe '::read' do
 				it 'must read header' do
 					io.init '16 0300 8182'
-					read, header = RecordHeader.read io
+					read, header = klass.read io
 					expect(read).to eq 5
 					expect(header.type).to eq Handshake
 					expect(header.version).to eq :ssl_3_0
@@ -15,18 +15,18 @@ module Cryptcheck::Engine
 
 				it 'must reject invalid content type' do
 					io.init 'FF 0300 8182'
-					expect { RecordHeader.read io }.to raise_error ProtocolError, 'Unknown content type 0xFF'
+					expect { klass.read io }.to raise_error ProtocolError, 'Unknown content type 0xFF'
 				end
 
 				it 'must reject invalid version' do
 					io.init '16 FFFF 8182'
-					expect { RecordHeader.read io }.to raise_error ProtocolError, 'Unknown version 0xFFFF'
+					expect { klass.read io }.to raise_error ProtocolError, 'Unknown version 0xFFFF'
 				end
 			end
 
 			describe '#write' do
 				it 'must write header' do
-					header  = RecordHeader.new Handshake, :ssl_3_0, 0x8182
+					header  = klass.new Handshake, :ssl_3_0, 0x8182
 					written = header.write io
 					expect(written).to eq 5
 					expect(io.string).to eq_hex '16 0300 8182'

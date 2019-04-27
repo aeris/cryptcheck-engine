@@ -13,9 +13,9 @@ SimpleCov.start do
 	add_filter 'spec/'
 end
 
-require './spec/helpers'
+# require './spec/helpers'
 RSpec.configure do |config|
-	config.include Helpers
+	# config.include Helpers
 
 	# Enable flags like --only-failures and --next-failure
 	config.example_status_persistence_file_path = '.rspec_status'
@@ -28,30 +28,4 @@ RSpec.configure do |config|
 	end
 end
 
-require 'rspec/expectations'
-
-RSpec::Matchers.define :eq_hex do |expected|
-	attr_reader :actual, :expected
-	match do |actual|
-		tmp       = actual.to_hex.upcase
-		n         = 0
-		@expected = expected.upcase
-		@actual   = @expected.each_char.collect do |e|
-			unless e =~ /\s/
-				t = tmp[n]
-				e = t if t
-				n += 1
-			end
-			e
-		end.join
-		tmp       = tmp[n..-1]
-		@actual   += tmp if tmp
-		values_match? expected.from_hex, actual.b
-	end
-	# failure_message do |actual|
-	# 	expected = expected.gsub(/\s/, '').upcase
-	# 	"expected \"#{actual.to_hex}\" to eq hex \"#{expected}\""
-	# end
-	diffable
-end
-
+Dir['spec/support/**/*.rb'].each { |f| require File.join '.', f }
