@@ -6,12 +6,14 @@ module Cryptcheck::Engine
 				autoload :SupportedGroups, 'cryptcheck/engine/tls/handshake/extension/supported_groups'
 				autoload :SupportedVersions, 'cryptcheck/engine/tls/handshake/extension/supported_versions'
 				autoload :SignatureAlgorithms, 'cryptcheck/engine/tls/handshake/extension/signature_algorithms'
+				autoload :RenegotiationInfo, 'cryptcheck/engine/tls/handshake/extension/renegotiation_info'
 
 				EXTENSIONS = IdClasses.new(
 						ServerName,
 						SupportedGroups,
 						SupportedVersions,
-						SignatureAlgorithms
+						SignatureAlgorithms,
+						RenegotiationInfo
 				).freeze
 
 				# region Types
