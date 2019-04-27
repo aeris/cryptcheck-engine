@@ -5,19 +5,22 @@ clone:
   depth: 1
 
 steps:
-- name: test
-  image: aeris22/ruby:2.6-alpine
-  commands:
-  - bundle install
-  - rspec
+  - name: test
+    image: aeris22/ruby:2.6-alpine
+    commands:
+      - bundle install
+      - rspec
 
-- name: notify
-  image: drillster/drone-email
-  settings:
-    host:
-      from_secret: smtp.host
-    skip_verify: true
-    from:
-      from_secret: smtp.from
+  - name: notify
+    image: drillster/drone-email
+    settings:
+      host:
+        from_secret: smtp.host
+      skip_verify: true
+      from:
+        from_secret: smtp.from
     when:
       status: [ changed, failure ]
+      instance:
+        exclude:
+          - cloud.drone.io
