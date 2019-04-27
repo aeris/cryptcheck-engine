@@ -5,9 +5,10 @@ module Cryptcheck::Engine
 			autoload :Extension, 'cryptcheck/engine/tls/handshake/extension'
 			autoload :ClientHello, 'cryptcheck/engine/tls/handshake/client_hello'
 			autoload :ServerHello, 'cryptcheck/engine/tls/handshake/server_hello'
+			autoload :Certificate, 'cryptcheck/engine/tls/handshake/certificate'
 
 			ID = 0x16
-			# 0x0b => :certificate,
+
 			# 0x0c => :server_key_exchange,
 			# 0x0d => :certificate_request,
 			# 0x0e => :server_hello_done,
@@ -18,6 +19,7 @@ module Cryptcheck::Engine
 					HelloRequest, # 0x00
 					ClientHello, # 0x01
 					ServerHello, # 0x02
+					Certificate, # 0x03
 			).freeze
 
 			def self.read(io)
