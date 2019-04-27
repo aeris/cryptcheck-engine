@@ -25,30 +25,57 @@ class StringIO
 				self.write data
 			end
 		RUBY_EVAL
+	end
 
-		def write_data(type, data)
-			data    ||= ''
-			data    = data.b
-			written = 0
-			size    = data.size
-			written += self.send "write_#{type}", size
-			written += self.write data
-			written
+	def read_uint(size)
+		value = 0
+		size.times do
+			value *= 0x0100
+			_, t  = self.read_uint8
+			value += t
 		end
+		[size, value]
+	end
 
-		def read_data(type)
-			read      = 0
-			r, length = self.send "read_#{type}"
-			read      += r
-			data      = if length == 0
-							nil
-						else
-							data = self.read length
-							read += length
-							data.b
-						end
-			[read, data]
-		end
+	def write_uint(size, value)
+		value = size.times.collect { t = value % 0x0100; value /= 0x0100; t }.reverse
+		value.each { |s| self.write_uint8 s }
+		size
+	end
+
+	def write_data(type, data)
+		data    ||= ''
+		data    = data.b
+		written = 0
+		size    = data.size
+		written += case type
+				   when Symbol
+					   self.send "write_#{type}", size
+				   else
+					   self.write_uint type, size
+				   end
+		written += self.write data
+		written
+	end
+
+	def read_data(type)
+		read      = 0
+		r, length =
+				case type
+				when Symbol
+					self.send "read_#{type}"
+				else
+					self.read_uint type
+				end
+		read      += r
+		data      = if length == 0
+						nil
+					else
+						data = self.read length
+						read += length
+						data.b
+					end
+		[read, data]
 	end
 
 	def collect(length)
