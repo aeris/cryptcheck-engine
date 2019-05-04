@@ -480,6 +480,29 @@ module Cryptcheck
 			).freeze
 			# endregion
 
+			def self.read_group(io)
+				read, tmp = io.read_uint16
+				group     = GROUPS[tmp]
+				raise ProtocolError, 'Unknown group 0x%04X' % tmp unless group
+				[read, group]
+			end
+
+			def self.read_groups(io)
+				io.collect(:uint16) { self.read_group io }
+			end
+
+			def self.write_group(io, group)
+				id = GROUPS.inverse group
+				raise ProtocolError, 'Unknown group %s' % group unless id
+				io.write_uint16 id
+			end
+
+			def self.write_groups(io, groups)
+				io2 = StringIO.new
+				groups.each { |g| self.write_group io2, g }
+				io.write_data :uint16, io2.string
+			end
+
 			# region Signature algorithms
 			SIGNATURE_ALGORITHMS = DoubleHash.new(
 					0x00 => :anonymous,
@@ -538,11 +561,18 @@ module Cryptcheck
 			)
 			# endregion
 
-			# region Key exchange algorithms
-			KEY_EXCHANGE_ALGORITHMS = DoubleHash.new(
+			def self.read_curve_type(io)
+				read, tmp = io.read_uint8
+				type      = CURVE_TYPES[tmp]
+				raise ProtocolError, 'Unknown curve type 0x%02X' % tmp unless type
+				[read, type]
+			end
 
-			)
-			# endregion
+			def self.write_curve_type(io, type)
+				id = CURVE_TYPES.inverse type
+				raise ProtocolError, 'Unknown curve type %s' % type unless id
+				io.write_uint8 id
+			end
 
 			autoload :RecordHeader, 'cryptcheck/engine/tls/record_header'
 			autoload :Handshake, 'cryptcheck/engine/tls/handshake'
