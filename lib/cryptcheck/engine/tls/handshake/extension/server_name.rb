@@ -10,23 +10,19 @@ module Cryptcheck::Engine
 					).freeze
 
 					def self.read(io)
-						read      = 0
-						r, length = io.read_uint16
-						read      += r
-						r, names  = io.collect length do
-							read2  = 0
+						read, names = io.collect :uint16 do
+							read   = 0
 							r, tmp = io.read_uint8
-							read2  += r
+							read   += r
 							type   = NAME_TYPE[tmp]
 							raise ProtocolError, 'Unknown name type 0x%02X' % tmp unless type
 
 							r, hostname = io.read_data :uint16
-							read2       += r
+							read        += r
 							name        = { type: type, hostname: hostname }
-							[read2, name]
+							[read, name]
 						end
-						read      += r
-						names     = self.new names
+						names       = self.new names
 						[read, names]
 					end
 

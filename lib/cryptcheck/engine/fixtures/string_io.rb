@@ -80,12 +80,22 @@ class StringIO
 
 	def collect(length)
 		results, read = [], 0
+
+		if length.is_a? Symbol
+			r, l   = self.send "read_#{length}"
+			read   += r
+			length = l
+		end
+
+		pos = 0
 		loop do
 			r, result = yield
 			results << result
 			read += r
-			break unless read < length
+			pos  += r
+			break unless pos < length
 		end
+
 		[read, results]
 	end
 end

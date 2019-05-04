@@ -89,15 +89,7 @@ module Cryptcheck::Engine
 				end
 
 				def self.read_all(io)
-					read          = 0
-					r, length     = io.read_uint16
-					read          += r
-					r, extensions = io.collect length do
-						r, extension = self.read io
-						[r, extension]
-					end
-					read          += r
-					[read, extensions]
+					io.collect(:uint16) { self.read io }
 				end
 
 				def self.write(io, extension)

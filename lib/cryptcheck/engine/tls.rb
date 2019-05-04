@@ -384,12 +384,7 @@ module Cryptcheck
 			end
 
 			def self.read_ciphers(io)
-				read       = 0
-				r, length  = io.read_uint16
-				read       += r
-				r, ciphers = io.collect(length) { self.read_cipher io }
-				read       += r
-				[read, ciphers]
+				io.collect(:uint16) { self.read_cipher io }
 			end
 
 			def self.write_cipher(io, cipher)
@@ -418,12 +413,7 @@ module Cryptcheck
 			end
 
 			def self.read_compressions(io)
-				read            = 0
-				r, length       = io.read_uint8
-				read            += r
-				r, compressions = io.collect(length) { self.read_compression io }
-				read            += r
-				[read, compressions]
+				io.collect(:uint8) { self.read_compression io }
 			end
 
 			def self.write_compression(io, compression)
@@ -548,12 +538,7 @@ module Cryptcheck
 			end
 
 			def self.read_signature_schemes(io)
-				read       = 0
-				r, length  = io.read_uint16
-				read       += r
-				r, schemes = io.collect(length) { self.read_signature_scheme io }
-				read       += r
-				[read, schemes]
+				io.collect(:uint16) { self.read_signature_scheme io }
 			end
 
 			def self.write_signature_scheme(io, scheme)
@@ -564,11 +549,7 @@ module Cryptcheck
 			def self.write_signature_schemes(io, schemes)
 				io2 = StringIO.new
 				schemes.each { |s| self.write_signature_scheme io2, s }
-
-				written = 0
-				written += io.write_uint16 io2.size
-				written += io.write io2.string
-				written
+				io.write_data :uint16, io2.string
 			end
 
 			# region Curve types

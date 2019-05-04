@@ -6,16 +6,12 @@ module Cryptcheck::Engine
 					ID = :supported_versions
 
 					def self.read(io)
-						read        = 0
-						r, length   = io.read_uint8
-						read        += r
-						r, versions = io.collect length do
+						read, versions = io.collect :uint8 do
 							r, tmp  = io.read_uint16
 							version = VERSIONS[tmp]
 							raise ProtocolError, 'Unknown version 0x%04X' % tmp unless version
 							[r, version]
 						end
-						read        += r
 						versions    = self.new versions
 						[read, versions]
 					end
