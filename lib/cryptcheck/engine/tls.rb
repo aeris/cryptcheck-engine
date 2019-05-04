@@ -540,6 +540,51 @@ module Cryptcheck
 			)
 			# endregion
 
+			def self.read_signature_scheme(io)
+				read, tmp = io.read_uint16
+				scheme    = SIGNATURE_SCHEMES[tmp]
+				raise ProtocolError, 'Unknown signature scheme 0x%04X' % tmp unless scheme
+				[read, scheme]
+			end
+
+			def self.read_signature_schemes(io)
+				read       = 0
+				r, length  = io.read_uint16
+				read       += r
+				r, schemes = io.collect(length) { self.read_signature_scheme io }
+				read       += r
+				[read, schemes]
+			end
+
+			def self.write_signature_scheme(io, scheme)
+				id = SIGNATURE_SCHEMES.inverse scheme
+				io.write_uint16 id
+			end
+
+			def self.write_signature_schemes(io, schemes)
+				io2 = StringIO.new
+				schemes.each { |s| self.write_signature_scheme io2, s }
+
+				written = 0
+				written += io.write_uint16 io2.size
+				written += io.write io2.string
+				written
+			end
+
+			# region Curve types
+			CURVE_TYPES = DoubleHash.new(
+					0x01 => :explicit_prime,
+					0x02 => :explicit_char2,
+					0x03 => :named_curve,
+			)
+			# endregion
+
+			# region Key exchange algorithms
+			KEY_EXCHANGE_ALGORITHMS = DoubleHash.new(
+
+			)
+			# endregion
+
 			autoload :RecordHeader, 'cryptcheck/engine/tls/record_header'
 			autoload :Handshake, 'cryptcheck/engine/tls/handshake'
 
