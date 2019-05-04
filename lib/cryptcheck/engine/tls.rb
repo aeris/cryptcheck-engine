@@ -530,28 +530,6 @@ module Cryptcheck
 			)
 			# endregion
 
-			def self.read_signature_scheme(io)
-				read, tmp = io.read_uint16
-				scheme    = SIGNATURE_SCHEMES[tmp]
-				raise ProtocolError, 'Unknown signature scheme 0x%04X' % tmp unless scheme
-				[read, scheme]
-			end
-
-			def self.read_signature_schemes(io)
-				io.collect(:uint16) { self.read_signature_scheme io }
-			end
-
-			def self.write_signature_scheme(io, scheme)
-				id = SIGNATURE_SCHEMES.inverse scheme
-				io.write_uint16 id
-			end
-
-			def self.write_signature_schemes(io, schemes)
-				io2 = StringIO.new
-				schemes.each { |s| self.write_signature_scheme io2, s }
-				io.write_data :uint16, io2.string
-			end
-
 			# region Curve types
 			CURVE_TYPES = DoubleHash.new(
 					0x01 => :explicit_prime,
@@ -568,6 +546,7 @@ module Cryptcheck
 
 			autoload :RecordHeader, 'cryptcheck/engine/tls/record_header'
 			autoload :Handshake, 'cryptcheck/engine/tls/handshake'
+			autoload :Signature, 'cryptcheck/engine/tls/signature'
 
 			def self.read(io)
 				read      = 0

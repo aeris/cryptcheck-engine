@@ -6,13 +6,13 @@ module Cryptcheck::Engine
 					ID = :signature_algorithms
 
 					def self.read(io)
-						read, schemes = Tls.read_signature_schemes io
-						schemes = self.new schemes
+						read, schemes = Signature.read_schemes io
+						schemes       = self.new schemes
 						[read, schemes]
 					end
 
 					def write(io)
-						Tls.write_signature_schemes io, @schemes
+						Signature.write_schemes io, @schemes
 					end
 
 					attr_reader :schemes
