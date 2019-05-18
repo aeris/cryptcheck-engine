@@ -9,11 +9,11 @@ module Cryptcheck::Engine
 			autoload :ServerKeyExchange, 'cryptcheck/engine/tls/handshake/server_key_exchange'
 			autoload :DhServerKeyExchange, 'cryptcheck/engine/tls/handshake/server_key_exchange'
 			autoload :EcdhServerKeyExchange, 'cryptcheck/engine/tls/handshake/server_key_exchange'
+			autoload :ServerHelloDone, 'cryptcheck/engine/tls/handshake/server_hello_done'
 
 			ID = 0x16
 
 			# 0x0d => :certificate_request,
-			# 0x0e => :server_hello_done,
 			# 0x0f => :certificate_verify,
 			# 0x10 => :client_key_exchange,
 			# 0x14 => :finished
@@ -23,6 +23,7 @@ module Cryptcheck::Engine
 					ServerHello, # 0x02
 					Certificate, # 0x0B
 					ServerKeyExchange, # 0x0C
+					ServerHelloDone, # 0x0E
 			).freeze
 
 			def self.read(io)
