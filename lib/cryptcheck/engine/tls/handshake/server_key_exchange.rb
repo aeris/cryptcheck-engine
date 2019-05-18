@@ -6,7 +6,7 @@ module Cryptcheck::Engine
 			end
 
 			class EcdhServerKeyExchange < ServerKeyExchange
-				def self.read(io)
+				def self.read(io, anonymous = false)
 					read = 0
 
 					r, curve_type = Tls.read_curve_type io
@@ -20,7 +20,12 @@ module Cryptcheck::Engine
 						r, public_key = io.read_data :uint8
 						read          += r
 					end
-					r, signature = Signature.read io
+
+					r, signature = if anonymous
+									   [0, nil]
+								   else
+									   Signature.read io
+								   end
 					read         += r
 
 					ecdh = self.new group, public_key, signature
@@ -29,16 +34,16 @@ module Cryptcheck::Engine
 
 				def write(io)
 					written = 0
-					written += Tls.write_curve_type io,:named_curve
+					written += Tls.write_curve_type io, :named_curve
 					written += Tls.write_group io, @group
 					written += io.write_data :uint8, @public_key
-					written += @signature.write io
+					written += @signature.write io if @signature
 					written
 				end
 
 				attr_reader :group, :public_key, :signature
 
-				def initialize(group, public_key, signature)
+				def initialize(group, public_key, signature = nil)
 					@group      = group
 					@public_key = public_key
 					@signature  = signature
@@ -46,7 +51,7 @@ module Cryptcheck::Engine
 			end
 
 			class DhServerKeyExchange < ServerKeyExchange
-				def self.read(io)
+				def self.read(io, anonymous = false)
 					read = 0
 
 					r, p  = io.read_data :uint16
@@ -56,7 +61,11 @@ module Cryptcheck::Engine
 					r, ys = io.read_data :uint16
 					read  += r
 
-					r, signature = Signature.read io
+					r, signature = if anonymous
+									   [0, nil]
+								   else
+									   Signature.read io
+								   end
 					read         += r
 
 					dh = self.new p, g, ys, signature
@@ -68,13 +77,13 @@ module Cryptcheck::Engine
 					written += io.write_data :uint16, @p
 					written += io.write_data :uint16, @g
 					written += io.write_data :uint16, @ys
-					written += @signature.write io
+					written += @signature.write io if @signature
 					written
 				end
 
 				attr_reader :p, :g, :ys, :signature
 
-				def initialize(p, g, ys, signature)
+				def initialize(p, g, ys, signature = nil)
 					@p         = p
 					@g         = g
 					@ys        = ys

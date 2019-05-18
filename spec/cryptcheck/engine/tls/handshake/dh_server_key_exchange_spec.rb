@@ -41,38 +41,69 @@ module Cryptcheck::Engine
 					    bbc65c838e26d8c44fa283c18e4e0bc366bb8bdb15c0c40bf7cc600c9d4d6ca6
 					HEREDOC
 				}
-				let!(:packet) {
+				let!(:anonymous_packet) {
 					<<~HEREDOC
 					    0100 #{p}
 					    0001 #{g}
 					    0100 #{ys}
+					HEREDOC
+				}
+				let!(:packet) {
+					<<~HEREDOC
+					    #{anonymous_packet}
 					    0401 0100 #{signature}
 					HEREDOC
 				}
 
 				describe '::read' do
-					it 'must read record' do
-						io.init packet
-						read, record = klass.read io
-						expect(read).to eq 779
-						expect(record).to be_a DhServerKeyExchange
-						expect(record.p).to eq_hex p
-						expect(record.g).to eq_hex g
-						expect(record.ys).to eq_hex ys
-						sign = record.signature
-						expect(sign).to be_a Signature
-						expect(sign.scheme).to eq :rsa_pkcs1_sha256
-						expect(sign.signature).to eq_hex signature
+					context 'when anonymous' do
+						it 'must read record without signature' do
+							io.init anonymous_packet
+							read, record = klass.read io, true
+							expect(read).to eq 519
+							expect(record).to be_a DhServerKeyExchange
+							expect(record.p).to eq_hex p
+							expect(record.g).to eq_hex g
+							expect(record.ys).to eq_hex ys
+							expect(record.signature).to be_nil
+						end
+					end
+
+					context 'when authenticated' do
+						it 'must read record with a signature' do
+							io.init packet
+							read, record = klass.read io
+							expect(read).to eq 779
+							expect(record).to be_a DhServerKeyExchange
+							expect(record.p).to eq_hex p
+							expect(record.g).to eq_hex g
+							expect(record.ys).to eq_hex ys
+							sign = record.signature
+							expect(sign).to be_a Signature
+							expect(sign.scheme).to eq :rsa_pkcs1_sha256
+							expect(sign.signature).to eq_hex signature
+						end
 					end
 				end
 
 				describe '#write' do
-					it 'must write record' do
-						sign    = Signature.new :rsa_pkcs1_sha256, signature.from_hex
-						record  = klass.new p.from_hex, g.from_hex, ys.from_hex, sign
-						written = record.write io
-						expect(written).to eq 779
-						expect(io.string).to eq_hex packet
+					context 'when anonymous' do
+						it 'must write record without signature' do
+							record  = klass.new p.from_hex, g.from_hex, ys.from_hex
+							written = record.write io
+							expect(written).to eq 519
+							expect(io.string).to eq_hex anonymous_packet
+						end
+					end
+
+					context 'when authenticated' do
+						it 'must write record with signature' do
+							sign    = Signature.new :rsa_pkcs1_sha256, signature.from_hex
+							record  = klass.new p.from_hex, g.from_hex, ys.from_hex, sign
+							written = record.write io
+							expect(written).to eq 779
+							expect(io.string).to eq_hex packet
+						end
 					end
 				end
 			end
