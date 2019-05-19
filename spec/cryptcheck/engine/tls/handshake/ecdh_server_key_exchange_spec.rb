@@ -39,8 +39,8 @@ module Cryptcheck::Engine
 					context 'when anonymous' do
 						it 'must read record without signature' do
 							io.init anonymous_packet
-							read, record = klass.read io, true
-							expect(read).to eq 69
+							record = klass.read io, true
+							expect(io).to be_read 69
 							expect(record).to be_a EcdhServerKeyExchange
 							expect(record.group).to eq :secp256r1
 							expect(record.public_key).to eq_hex public_key
@@ -51,8 +51,8 @@ module Cryptcheck::Engine
 					context 'when authenticated' do
 						it 'must read record with signature' do
 							io.init packet
-							read, record = klass.read io
-							expect(read).to eq 329
+							record = klass.read io
+							expect(io).to be_read 329
 							expect(record).to be_a EcdhServerKeyExchange
 							expect(record.group).to eq :secp256r1
 							expect(record.public_key).to eq_hex public_key
@@ -67,20 +67,18 @@ module Cryptcheck::Engine
 				describe '#write' do
 					context 'when anonymous' do
 						it 'must write record without signature' do
-							record  = klass.new :secp256r1, public_key.from_hex
-							written = record.write io
-							expect(written).to eq 69
-							expect(io.string).to eq_hex anonymous_packet
+							record = klass.new :secp256r1, public_key.from_hex
+							record.write io
+							expect(io).to be_hex_written anonymous_packet
 						end
 					end
 
 					context 'when authenticated' do
 						it 'must write record with a signature' do
-							sign    = Signature.new :rsa_pkcs1_sha256, signature.from_hex
-							record  = klass.new :secp256r1, public_key.from_hex, sign
-							written = record.write io
-							expect(written).to eq 329
-							expect(io.string).to eq_hex packet
+							sign   = Signature.new :rsa_pkcs1_sha256, signature.from_hex
+							record = klass.new :secp256r1, public_key.from_hex, sign
+							record.write io
+							expect(io).to be_hex_written packet
 						end
 					end
 				end

@@ -7,38 +7,25 @@ module Cryptcheck::Engine
 
 			class EcdhServerKeyExchange < ServerKeyExchange
 				def self.read(io, anonymous = false)
-					read = 0
-
-					r, curve_type = Tls.read_curve_type io
-					read          += r
+					curve_type = Tls.read_curve_type io
 					raise 'Unsupported curve type' unless curve_type == :named_curve
 
 					case curve_type
 					when :named_curve
-						r, group      = Tls.read_group io
-						read          += r
-						r, public_key = io.read_data :uint8
-						read          += r
+						group      = Tls.read_group io
+						public_key = io.read_data :uint8
 					end
 
-					r, signature = if anonymous
-									   [0, nil]
-								   else
-									   Signature.read io
-								   end
-					read         += r
+					signature = Signature.read io unless anonymous
 
-					ecdh = self.new group, public_key, signature
-					[read, ecdh]
+					self.new group, public_key, signature
 				end
 
 				def write(io)
-					written = 0
-					written += Tls.write_curve_type io, :named_curve
-					written += Tls.write_group io, @group
-					written += io.write_data :uint8, @public_key
-					written += @signature.write io if @signature
-					written
+					Tls.write_curve_type io, :named_curve
+					Tls.write_group io, @group
+					io.write_data :uint8, @public_key
+					@signature.write io if @signature
 				end
 
 				attr_reader :group, :public_key, :signature
@@ -52,33 +39,18 @@ module Cryptcheck::Engine
 
 			class DhServerKeyExchange < ServerKeyExchange
 				def self.read(io, anonymous = false)
-					read = 0
-
-					r, p  = io.read_data :uint16
-					read  += r
-					r, g  = io.read_data :uint16
-					read  += r
-					r, ys = io.read_data :uint16
-					read  += r
-
-					r, signature = if anonymous
-									   [0, nil]
-								   else
-									   Signature.read io
-								   end
-					read         += r
-
-					dh = self.new p, g, ys, signature
-					[read, dh]
+					p         = io.read_data :uint16
+					g         = io.read_data :uint16
+					ys        = io.read_data :uint16
+					signature = Signature.read io unless anonymous
+					self.new p, g, ys, signature
 				end
 
 				def write(io)
-					written = 0
-					written += io.write_data :uint16, @p
-					written += io.write_data :uint16, @g
-					written += io.write_data :uint16, @ys
-					written += @signature.write io if @signature
-					written
+					io.write_data :uint16, @p
+					io.write_data :uint16, @g
+					io.write_data :uint16, @ys
+					@signature.write io if @signature
 				end
 
 				attr_reader :p, :g, :ys, :signature

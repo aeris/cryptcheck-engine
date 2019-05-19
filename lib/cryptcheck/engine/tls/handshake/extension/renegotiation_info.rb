@@ -6,9 +6,8 @@ module Cryptcheck::Engine
 					ID = :renegotiation_info
 
 					def self.read(io)
-						read, verify_data = io.read_data :uint8
-						extension         = self.new verify_data
-						[read, extension]
+						verify_data = io.read_data :uint8
+						self.new verify_data
 					end
 
 					def write(io)

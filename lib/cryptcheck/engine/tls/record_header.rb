@@ -11,35 +11,28 @@ module Cryptcheck
 				).freeze
 
 				def self.read(io)
-					read   = 0
-					r, tmp = io.read_uint8
-					read   += r
-					type   = CONTENT_TYPES[tmp]
+					tmp  = io.read_uint8
+					type = CONTENT_TYPES[tmp]
 					raise ProtocolError, 'Unknown content type 0x%02X' % tmp unless type
 
-					r, tmp  = io.read_uint16
-					read    += r
+					tmp     = io.read_uint16
 					version = VERSIONS[tmp]
 					raise ProtocolError, 'Unknown version 0x%04X' % tmp unless version
 
-					r, length = io.read_uint16
-					read      += r
+					length = io.read_uint16
 
-					header = self.new type, version, length
-					[read, header]
+					self.new type, version, length
 				end
 
 				def write(io)
-					written = 0
-					written += io.write_uint8 self.type::ID
+					io.write_uint8 self.type::ID
 
 					tmp     = self.version
 					version = VERSIONS.inverse tmp
 					raise ProtocolError, "Unknown version #{tmp}" unless version
-					written += io.write_uint16 version
+					io.write_uint16 version
 
-					written += io.write_uint16 self.length
-					written
+					io.write_uint16 self.length
 				end
 
 				attr_reader :type, :version, :length

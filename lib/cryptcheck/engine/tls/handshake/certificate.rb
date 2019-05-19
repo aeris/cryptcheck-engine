@@ -5,19 +5,12 @@ module Cryptcheck::Engine
 				ID = 0x0B
 
 				def self.read(io)
-					read      = 0
-					r, length = io.read_uint 3
-					read      += r
-
-					r, certs = io.collect length do
-						r, der = io.read_data 3
-						cert   = OpenSSL::X509::Certificate.new der
-						[r, cert]
+					length = io.read_uint 3
+					certs  = io.collect length do
+						der = io.read_data 3
+						OpenSSL::X509::Certificate.new der
 					end
-					read     += r
-
-					certs = self.new certs
-					[read, certs]
+					self.new certs
 				end
 
 				def write(io)

@@ -6,8 +6,8 @@ module Cryptcheck::Engine
 			describe '::read' do
 				it 'must read header' do
 					io.init '16 0300 8182'
-					read, header = klass.read io
-					expect(read).to eq 5
+					header = klass.read io
+					expect(io).to be_read 5
 					expect(header.type).to eq Handshake
 					expect(header.version).to eq :ssl_3_0
 					expect(header.length).to eq 0x8182
@@ -26,10 +26,9 @@ module Cryptcheck::Engine
 
 			describe '#write' do
 				it 'must write header' do
-					header  = klass.new Handshake, :ssl_3_0, 0x8182
-					written = header.write io
-					expect(written).to eq 5
-					expect(io.string).to eq_hex '16 0300 8182'
+					header = klass.new Handshake, :ssl_3_0, 0x8182
+					header.write io
+					expect(io).to be_hex_written '16 0300 8182'
 				end
 			end
 		end

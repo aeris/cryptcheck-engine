@@ -34,15 +34,15 @@ module Cryptcheck::Engine
 				describe '::read' do
 					it 'must read record' do
 						io.init packet
-						read, record = klass.read io
-						expect(read).to eq 511
+						record = klass.read io
+						expect(io).to be_read 511
 						expect(record).to be_a ClientHello
 					end
 				end
 
 				describe '#write' do
 					it 'must write record' do
-						record  = klass.build {
+						record = klass.build {
 							version :tls_1_2
 							random 'd2fd9f45420f2aee2f2066b1bf44f939a382ccf734277107412d091891aecbe4'.from_hex
 							session '2c29c80d4f5e8876a5c52bdc9bdfd811b43602f92d54c5cc0d3a435bec9a6549'.from_hex
@@ -54,9 +54,8 @@ module Cryptcheck::Engine
 							cipher :TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
 							extension Extension::ServerName.build 'cryptcheck.fr'
 						}
-						written = record.write io
-						expect(written).to eq 107
-						expect(io.string).to eq_hex <<~HEREDOC
+						record.write io
+						expect(io).to be_hex_written <<~HEREDOC
 						    0303
 						    d2fd9f45420f2aee2f2066b1bf44f939a382ccf734277107412d091891aecbe4
 						    20 2c29c80d4f5e8876a5c52bdc9bdfd811b43602f92d54c5cc0d3a435bec9a6549

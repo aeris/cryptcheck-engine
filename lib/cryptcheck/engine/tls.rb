@@ -15,10 +15,10 @@ module Cryptcheck
 			# endregion
 
 			def self.read_version(io)
-				r, tmp  = io.read_uint16
+				tmp     = io.read_uint16
 				version = VERSIONS[tmp]
 				raise ProtocolError, 'Unknown client version 0x%02X' % tmp unless version
-				[r, version]
+				version
 			end
 
 			def self.write_version(io, version)
@@ -377,10 +377,10 @@ module Cryptcheck
 			# endregion
 
 			def self.read_cipher(io)
-				r, tmp = io.read_uint16
+				tmp    = io.read_uint16
 				cipher = CIPHERS[tmp]
 				raise ProtocolError, 'Unknown cipher 0x%04X' % tmp unless cipher
-				[r, cipher]
+				cipher
 			end
 
 			def self.read_ciphers(io)
@@ -406,10 +406,10 @@ module Cryptcheck
 			).freeze
 
 			def self.read_compression(io)
-				r, tmp      = io.read_uint8
+				tmp         = io.read_uint8
 				compression = COMPRESSIONS[tmp]
 				raise ProtocolError, 'Unknown compression 0x%02X' % tmp unless compression
-				[r, compression]
+				compression
 			end
 
 			def self.read_compressions(io)
@@ -481,10 +481,10 @@ module Cryptcheck
 			# endregion
 
 			def self.read_group(io)
-				read, tmp = io.read_uint16
-				group     = GROUPS[tmp]
+				tmp   = io.read_uint16
+				group = GROUPS[tmp]
 				raise ProtocolError, 'Unknown group 0x%04X' % tmp unless group
-				[read, group]
+				group
 			end
 
 			def self.read_groups(io)
@@ -562,10 +562,10 @@ module Cryptcheck
 			# endregion
 
 			def self.read_curve_type(io)
-				read, tmp = io.read_uint8
-				type      = CURVE_TYPES[tmp]
+				tmp  = io.read_uint8
+				type = CURVE_TYPES[tmp]
 				raise ProtocolError, 'Unknown curve type 0x%02X' % tmp unless type
-				[read, type]
+				type
 			end
 
 			def self.write_curve_type(io, type)
@@ -579,12 +579,9 @@ module Cryptcheck
 			autoload :Signature, 'cryptcheck/engine/tls/signature'
 
 			def self.read(io)
-				read      = 0
-				r, header = RecordHeader.read io
-				read      += r
-				r, record = header.type.read io
-				read      += r
-				[read, header, record]
+				header = RecordHeader.read io
+				record = header.type.read io
+				[header, record]
 			end
 
 			def self.write(io, version, record)
@@ -595,10 +592,8 @@ module Cryptcheck
 				length = io2.size
 				header = RecordHeader.new type, version, length
 
-				written = 0
-				written += header.write io
-				written += io.write io2.string
-				written
+				header.write io
+				io.write io2.string
 			end
 		end
 	end

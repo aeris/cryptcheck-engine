@@ -40,8 +40,8 @@ module Cryptcheck::Engine
 				describe '::read' do
 					it 'must read record' do
 						io.init packet
-						read, record = klass.read io
-						expect(read).to eq 811
+						record = klass.read io
+						expect(io).to be_read 811
 						expect(record).to be_a Certificate
 						certificates = record.certificates
 						expect(certificates.size).to eq 1
@@ -52,10 +52,9 @@ module Cryptcheck::Engine
 
 				describe '#write' do
 					it 'must write record' do
-						record  = klass.new [certificate]
-						written = record.write io
-						expect(written).to eq 811
-						expect(io.string).to eq_hex packet
+						record = klass.new [certificate]
+						record.write io
+						expect(io).to be_hex_written packet
 					end
 				end
 			end

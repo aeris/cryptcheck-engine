@@ -5,11 +5,10 @@ module Cryptcheck::Engine
 				ID = 0x0E
 
 				def self.read(_)
-					[0, self.new]
+					self.new
 				end
 
 				def write(_)
-					0
 				end
 			end
 		end

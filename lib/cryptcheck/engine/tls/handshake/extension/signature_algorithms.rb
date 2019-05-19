@@ -6,9 +6,8 @@ module Cryptcheck::Engine
 					ID = :signature_algorithms
 
 					def self.read(io)
-						read, schemes = Signature.read_schemes io
-						schemes       = self.new schemes
-						[read, schemes]
+						schemes = Signature.read_schemes io
+						self.new schemes
 					end
 
 					def write(io)

@@ -67,25 +67,18 @@ module Cryptcheck::Engine
 				# endregion
 
 				def self.read(io)
-					read   = 0
-					r, tmp = io.read_uint16
-					id     = TYPES[tmp]
+					tmp = io.read_uint16
+					id  = TYPES[tmp]
 					raise ProtocolError, 'Unknown extension 0x%04X' % tmp unless id
-					read      += r
-					r, length = io.read_uint16
-					read      += r
+					length = io.read_uint16
 
-					clazz        = EXTENSIONS[id]
-					r, extension = if clazz
-									   clazz.read io
-								   else
-									   data      = io.read length
-									   extension = Extension.new id, data
-									   [length, extension]
-								   end
-					read         += r
-
-					[read, extension]
+					clazz = EXTENSIONS[id]
+					if clazz
+						clazz.read io
+					else
+						data = io.read length
+						Extension.new id, data
+					end
 				end
 
 				def self.read_all(io)
@@ -96,17 +89,16 @@ module Cryptcheck::Engine
 					io2 = StringIO.new
 					extension.write io2
 
-					id      = case extension
-							  when Extension
-								  extension.id
-							  else
-								  extension.class::ID
-							  end
-					id      = TYPES.inverse id
-					written = 0
-					written += io.write_uint16 id
-					written += io.write_data :uint16, io2.string
-					written
+					id = case extension
+						 when Extension
+							 extension.id
+						 else
+							 extension.class::ID
+						 end
+					id = TYPES.inverse id
+
+					io.write_uint16 id
+					io.write_data :uint16, io2.string
 				end
 
 				def self.write_all(io, extensions)

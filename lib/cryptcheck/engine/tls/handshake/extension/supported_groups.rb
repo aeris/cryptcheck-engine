@@ -6,9 +6,8 @@ module Cryptcheck::Engine
 					ID = :supported_groups
 
 					def self.read(io)
-						read, groups = Tls.read_groups io
-						groups    = self.new groups
-						[read, groups]
+						groups = Tls.read_groups io
+						self.new groups
 					end
 
 					def write(io)

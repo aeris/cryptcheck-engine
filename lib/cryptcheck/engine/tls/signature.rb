@@ -2,10 +2,10 @@ module Cryptcheck::Engine
 	module Tls
 		class Signature
 			def self.read_scheme(io)
-				read, tmp = io.read_uint16
-				scheme    = SIGNATURE_SCHEMES[tmp]
+				tmp    = io.read_uint16
+				scheme = SIGNATURE_SCHEMES[tmp]
 				raise ProtocolError, 'Unknown signature scheme 0x%04X' % tmp unless scheme
-				[read, scheme]
+				scheme
 			end
 
 			def self.read_schemes(io)
@@ -25,20 +25,14 @@ module Cryptcheck::Engine
 			end
 
 			def self.read(io)
-				read         = 0
-				r, scheme    = self.read_scheme io
-				read         += r
-				r, signature = io.read_data :uint16
-				read         += r
-				signature    = self.new scheme, signature
-				[read, signature]
+				scheme    = self.read_scheme io
+				signature = io.read_data :uint16
+				self.new scheme, signature
 			end
 
 			def write(io)
-				written = 0
-				written += self.class.write_scheme io, @scheme
-				written += io.write_data :uint16, @signature
-				written
+				self.class.write_scheme io, @scheme
+				io.write_data :uint16, @signature
 			end
 
 			attr_reader :scheme, :signature

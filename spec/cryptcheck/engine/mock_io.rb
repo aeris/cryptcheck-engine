@@ -1,7 +1,16 @@
 module Cryptcheck::Engine
-	class MockIO < StringIO
+	class MockIO < CountableBuffer
+		def initialize
+			@io = StringIO.new
+			super @io
+		end
+
 		def init(string = '')
-			self.string = string.from_hex
+			@io.string = string.from_hex
+		end
+
+		def string
+			@io.string
 		end
 	end
 end

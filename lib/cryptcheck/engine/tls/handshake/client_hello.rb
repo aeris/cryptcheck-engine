@@ -7,39 +7,22 @@ module Cryptcheck::Engine
 				ID = 0x01
 
 				def self.read(io)
-					read       = 0
-					r, version = Tls.read_version io
-					read       += r
-
-					r      = 32
-					random = io.read r
-					read   += r
-
-					r, session = io.read_data :uint8
-					read       += r
-
-					r, ciphers = Tls.read_ciphers io
-					read       += r
-
-					r, compressions = Tls.read_compressions io
-					read            += r
-
-					r, extensions = Extension.read_all io
-					read          += r
-
-					record = self.new version, random, session, ciphers, compressions, extensions
-					[read, record]
+					version      = Tls.read_version io
+					random       = io.read 32
+					session      = io.read_data :uint8
+					ciphers      = Tls.read_ciphers io
+					compressions = Tls.read_compressions io
+					extensions   = Extension.read_all io
+					self.new version, random, session, ciphers, compressions, extensions
 				end
 
 				def write(io)
-					written = 0
-					written += Tls.write_version io, @version
-					written += io.write @random
-					written += io.write_data :uint8, @session
-					written += Tls.write_ciphers io, @ciphers
-					written += Tls.write_compressions io, @compressions
-					written += Extension.write_all io, @extensions
-					written
+					Tls.write_version io, @version
+					io.write @random
+					io.write_data :uint8, @session
+					Tls.write_ciphers io, @ciphers
+					Tls.write_compressions io, @compressions
+					Extension.write_all io, @extensions
 				end
 
 				attr_reader :version, :random, :session, :ciphers, :compressions, :extensions

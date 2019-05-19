@@ -14,15 +14,15 @@ module Cryptcheck::Engine
 				describe '::read' do
 					it 'must read supported record' do
 						io.init server_name_packet
-						read, extension = klass.read io
-						expect(read).to eq 22
+						extension = klass.read io
+						expect(io).to be_read 22
 						expect(extension).to be_a Extension::ServerName
 					end
 
 					it 'must read unsupported record' do
 						io.init raw_packet
-						read, extension = klass.read io
-						expect(read).to eq 22
+						extension = klass.read io
+						expect(io).to be_read 22
 						expect(extension).to be_a Extension
 						expect(extension.id).to eq :padding
 						expect(extension.data).to eq_hex raw_data
@@ -32,16 +32,14 @@ module Cryptcheck::Engine
 				describe '#write' do
 					it 'must write supported record' do
 						extension = Extension::ServerName.new server_name_names
-						written   = klass.write io, extension
-						expect(written).to eq 22
-						expect(io.string).to eq_hex server_name_packet
+						klass.write io, extension
+						expect(io).to be_hex_written server_name_packet
 					end
 
 					it 'must write unsupported record' do
 						extension = Extension.new :padding, raw_data.from_hex
-						written   = klass.write io, extension
-						expect(written).to eq 22
-						expect(io.string).to eq_hex raw_packet
+						klass.write io, extension
+						expect(io).to be_hex_written raw_packet
 					end
 				end
 			end

@@ -11,8 +11,8 @@ module Cryptcheck::Engine
 					describe '::read' do
 						it 'must read record' do
 							io.init packet
-							read, extension = klass.read io
-							expect(read).to eq 10
+							extension = klass.read io
+							expect(io).to be_read 10
 							expect(extension).to be_a SupportedGroups
 							expect(extension.groups).to eq groups
 						end
@@ -21,9 +21,8 @@ module Cryptcheck::Engine
 					describe ' #write' do
 						it 'must write record' do
 							extension = klass.new groups
-							written   = extension.write io
-							expect(written).to eq 10
-							expect(io.string).to eq_hex packet
+							extension.write io
+							expect(io).to be_hex_written packet
 						end
 					end
 				end

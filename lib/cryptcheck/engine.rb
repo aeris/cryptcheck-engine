@@ -1,7 +1,14 @@
 require 'cryptcheck/engine/version'
 
+module Cryptcheck
+	module Engine
+		autoload :Buffer, 'cryptcheck/engine/buffer'
+		autoload :CountableBuffer, 'cryptcheck/engine/countable_buffer'
+	end
+end
+
 fixtures = File.join __dir__, 'engine/fixtures/*.rb'
-Dir[fixtures].each { |f| require f }
+Dir[fixtures].each { |f| load f }
 
 module Cryptcheck
 	module Engine

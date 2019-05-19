@@ -27,32 +27,22 @@ module Cryptcheck::Engine
 			).freeze
 
 			def self.read(io)
-				read   = 0
-				r, tmp = io.read_uint8
-				read   += r
+				tmp = io.read_uint8
 
 				type = TYPES[tmp]
 				raise ProtocolError, 'Unknown handshake type 0x%04X' % tmp unless type
 
-				r, _ = io.read_uint 3
-				read += r
+				io.read_uint 3
 
-				r, record = type.read io
-				read      += r
-				record    = self.new record
-
-				[read, record]
+				record = type.read io
+				self.new record
 			end
 
 			def write(io)
-				written = 0
-				io2     = StringIO.new
-				written += @record.write io2
-
-				written += io.write_uint8 @record.class::ID
-				written += io.write_data 3, io2.string
-
-				written
+				io2 = StringIO.new
+				@record.write io2
+				io.write_uint8 @record.class::ID
+				io.write_data 3, io2.string
 			end
 
 			attr_reader :record

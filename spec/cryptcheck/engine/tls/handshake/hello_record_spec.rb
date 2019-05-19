@@ -7,18 +7,17 @@ module Cryptcheck::Engine
 				describe '::read' do
 					it 'must read record' do
 						io.init ''
-						read, record = klass.read io
-						expect(read).to eq 0
+						record = klass.read io
+						expect(io).to be_read 0
 						expect(record).to be_a HelloRequest
 					end
 				end
 
 				describe '#write' do
 					it 'must write record' do
-						record  = klass.new
-						written = record.write io
-						expect(written).to eq 0
-						expect(io.string).to eq_hex ''
+						record = klass.new
+						record.write io
+						expect(io).to be_hex_written ''
 					end
 				end
 			end
