@@ -10,12 +10,12 @@ module Cryptcheck::Engine
 			autoload :DhServerKeyExchange, 'cryptcheck/engine/tls/handshake/server_key_exchange'
 			autoload :EcdhServerKeyExchange, 'cryptcheck/engine/tls/handshake/server_key_exchange'
 			autoload :ServerHelloDone, 'cryptcheck/engine/tls/handshake/server_hello_done'
+			autoload :ClientKeyExchange, 'cryptcheck/engine/tls/handshake/client_key_exchange'
 
 			ID = 0x16
 
 			# 0x0d => :certificate_request,
 			# 0x0f => :certificate_verify,
-			# 0x10 => :client_key_exchange,
 			# 0x14 => :finished
 			TYPES = IdClasses.new(
 					HelloRequest, # 0x00
@@ -24,6 +24,7 @@ module Cryptcheck::Engine
 					Certificate, # 0x0B
 					ServerKeyExchange, # 0x0C
 					ServerHelloDone, # 0x0E
+					ClientKeyExchange, # 0x10
 			).freeze
 
 			def self.read(io)
