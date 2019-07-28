@@ -576,6 +576,7 @@ module Cryptcheck
 
 			autoload :RecordHeader, 'cryptcheck/engine/tls/record_header'
 			autoload :Handshake, 'cryptcheck/engine/tls/handshake'
+			autoload :ChangeCipherSpec, 'cryptcheck/engine/tls/change_cipher_spec'
 			autoload :Signature, 'cryptcheck/engine/tls/signature'
 
 			def self.read(io)

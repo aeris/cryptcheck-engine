@@ -8,6 +8,7 @@ module Cryptcheck
 				# 0x18 => :heartbeat
 				CONTENT_TYPES = IdClasses.new(
 						Handshake, # 0x16
+						ChangeCipherSpec, # 0x14
 				).freeze
 
 				def self.read(io)
