@@ -31,7 +31,7 @@ module Cryptcheck::Engine
 				tmp = io.read_uint8
 
 				type = TYPES[tmp]
-				raise ProtocolError, 'Unknown handshake type 0x%04X' % tmp unless type
+				raise ProtocolError, 'Unknown handshake type 0x%02X' % tmp unless type
 
 				io.read_uint 3
 

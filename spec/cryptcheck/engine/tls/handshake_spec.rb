@@ -14,7 +14,7 @@ module Cryptcheck::Engine
 
 				it 'must reject unknown record' do
 					io.init 'FF 000000'
-					expect { RecordHeader.read io }.to raise_error ProtocolError, 'Unknown content type 0xFF'
+					expect { klass.read io }.to raise_error ProtocolError, 'Unknown handshake type 0xFF'
 				end
 			end
 
