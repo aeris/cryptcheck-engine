@@ -2,6 +2,15 @@ module Cryptcheck::Engine
 	module Tls
 		class ProtocolError < StandardError
 		end
+		class AlertError < StandardError
+			attr_reader :alert
+
+			def initialize(alert)
+				@alert  = alert
+				message = "[#{alert.level}] Alert #{alert.description}"
+				super message
+			end
+		end
 
 		# region Versions
 		VERSIONS = DoubleHash.new(
@@ -580,8 +589,10 @@ module Cryptcheck::Engine
 		autoload :Alert, 'cryptcheck/engine/tls/alert'
 
 		def self.read(context, io)
-			header = RecordHeader.read context, io
-			record = header.type.read context, io
+			header      = RecordHeader.read context, io
+			record_type = header.type
+			record      = record_type.read context, io
+			raise AlertError, record if record.is_a? Alert
 			[header, record]
 		end
 

@@ -17,6 +17,15 @@ module Cryptcheck::Engine
 					expect(handshake).to be_a Handshake
 					expect(handshake.record).to be_a Handshake::HelloRequest
 				end
+
+				it 'must raise alert' do
+					io.init '15 0303 0002 010A'
+					expect { klass.read nil, io }.to raise_error AlertError do |error|
+						alert = error.alert
+						expect(alert.level).to eq :warning
+						expect(alert.description).to eq :unexpected_message
+					end
+				end
 			end
 
 			describe '#write' do

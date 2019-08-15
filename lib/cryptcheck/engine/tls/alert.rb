@@ -1,7 +1,7 @@
 module Cryptcheck::Engine
 	module Tls
 		class Alert
-			ID = 0x14
+			ID = 0x15
 
 			LEVELS = DoubleHash.new(
 					0x01 => :warning,
