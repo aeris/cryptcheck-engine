@@ -7,6 +7,7 @@ module Cryptcheck::Engine
 	fixtures = File.join __dir__, 'engine/fixtures/*.rb'
 	Dir[fixtures].each { |f| load f }
 
+	autoload :Builder, 'cryptcheck/engine/builder'
 	autoload :Error, 'cryptcheck/engine/error'
 	autoload :DoubleHash, 'cryptcheck/engine/double_hash'
 	autoload :IdClasses, 'cryptcheck/engine/id_classes'

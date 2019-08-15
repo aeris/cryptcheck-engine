@@ -38,8 +38,11 @@ module Cryptcheck::Engine
 
 				private
 
+				class Builder_
+					include Builder
+					attributes :version, :random, :session
+					lists :cipher, :compression, :extension
 
-				class Builder
 					def initialize
 						@ciphers      = []
 						@compressions = %i[NULL]
@@ -50,55 +53,10 @@ module Cryptcheck::Engine
 						@random ||= SecureRandom.bytes 32
 						ClientHello.new @version, @random, @session, @ciphers, @compressions, @extensions
 					end
-
-					def version(version)
-						@version = version
-						self
-					end
-
-					def random(random)
-						@random = random
-						self
-					end
-
-					def session(session)
-						@session = session
-						self
-					end
-
-					def ciphers(ciphers)
-						@ciphers += ciphers
-						self
-					end
-
-					def cipher(cipher)
-						@ciphers << cipher
-						self
-					end
-
-					def compressions(compressions)
-						@compressions += compressions
-						self
-					end
-
-					def compression(compression)
-						@compression < compression
-						self
-					end
-
-					def extensions(extensions)
-						@extensions += extensions
-						self
-					end
-
-					def extension(extension)
-						@extensions << extension
-						self
-					end
 				end
 
 				def self.build(&block)
-					builder = Builder.new
+					builder = Builder_.new
 					builder.instance_eval &block if block_given?
 					builder.get
 				end
