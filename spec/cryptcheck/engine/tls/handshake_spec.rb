@@ -6,7 +6,7 @@ module Cryptcheck::Engine
 			describe '::read' do
 				it 'must read record' do
 					io.init '00 000000'
-					handshake = klass.read io
+					handshake = klass.read nil, io
 					expect(io).to be_read 4
 					expect(handshake).to be_a Handshake
 					expect(handshake.record).to be_a klass::HelloRequest
@@ -14,7 +14,7 @@ module Cryptcheck::Engine
 
 				it 'must reject unknown record' do
 					io.init 'FF 000000'
-					expect { klass.read io }.to raise_error ProtocolError, 'Unknown handshake type 0xFF'
+					expect { klass.read nil, io }.to raise_error ProtocolError, 'Unknown handshake type 0xFF'
 				end
 			end
 
@@ -22,7 +22,7 @@ module Cryptcheck::Engine
 				it 'must write record' do
 					record    = klass::HelloRequest.new
 					handshake = klass.new record
-					handshake.write io
+					handshake.write nil, io
 					expect(io).to be_hex_written '00 000000'
 				end
 			end

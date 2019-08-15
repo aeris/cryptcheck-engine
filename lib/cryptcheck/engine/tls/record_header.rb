@@ -10,7 +10,7 @@ module Cryptcheck::Engine
 					ChangeCipherSpec, # 0x14
 			).freeze
 
-			def self.read(io)
+			def self.read(_, io)
 				tmp  = io.read_uint8
 				type = CONTENT_TYPES[tmp]
 				raise ProtocolError, 'Unknown content type 0x%02X' % tmp unless type
@@ -24,7 +24,7 @@ module Cryptcheck::Engine
 				self.new type, version, length
 			end
 
-			def write(io)
+			def write(_, io)
 				io.write_uint8 self.type::ID
 
 				tmp     = self.version

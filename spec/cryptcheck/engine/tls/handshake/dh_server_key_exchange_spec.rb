@@ -59,7 +59,7 @@ module Cryptcheck::Engine
 					context 'when anonymous' do
 						it 'must read record without signature' do
 							io.init anonymous_packet
-							record = klass.read io, true
+							record = klass.read nil, io, true
 							expect(io).to be_read 519
 							expect(record).to be_a DhServerKeyExchange
 							expect(record.p).to eq_hex p
@@ -72,7 +72,7 @@ module Cryptcheck::Engine
 					context 'when authenticated' do
 						it 'must read record with a signature' do
 							io.init packet
-							record = klass.read io
+							record = klass.read nil, io
 							expect(io).to be_read 779
 							expect(record).to be_a DhServerKeyExchange
 							expect(record.p).to eq_hex p
@@ -90,7 +90,7 @@ module Cryptcheck::Engine
 					context 'when anonymous' do
 						it 'must write record without signature' do
 							record = klass.new p.from_hex, g.from_hex, ys.from_hex
-							record.write io
+							record.write nil, io
 							expect(io).to be_hex_written anonymous_packet
 						end
 					end
@@ -99,7 +99,7 @@ module Cryptcheck::Engine
 						it 'must write record with signature' do
 							sign   = Signature.new :rsa_pkcs1_sha256, signature.from_hex
 							record = klass.new p.from_hex, g.from_hex, ys.from_hex, sign
-							record.write io
+							record.write nil, io
 							expect(io).to be_hex_written packet
 						end
 					end

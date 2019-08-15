@@ -578,21 +578,21 @@ module Cryptcheck::Engine
 		autoload :ChangeCipherSpec, 'cryptcheck/engine/tls/change_cipher_spec'
 		autoload :Signature, 'cryptcheck/engine/tls/signature'
 
-		def self.read(io)
-			header = RecordHeader.read io
-			record = header.type.read io
+		def self.read(context, io)
+			header = RecordHeader.read context, io
+			record = header.type.read context, io
 			[header, record]
 		end
 
-		def self.write(io, version, record)
+		def self.write(context, io, version, record)
 			io2 = StringIO.new
-			record.write io2
+			record.write context, io2
 
 			type   = record.class
 			length = io2.size
 			header = RecordHeader.new type, version, length
 
-			header.write io
+			header.write context, io
 			io.write io2.string
 		end
 	end

@@ -21,7 +21,7 @@ module Cryptcheck::Engine
 				describe '::read' do
 					it 'must read record' do
 						io.init packet
-						record = klass.read io
+						record = klass.read nil, io
 						expect(io).to be_read 258
 						expect(record).to be_a EncryptedPreMasterKeySecret
 						expect(record.encrypted_pre_master_secret).to eq_hex encrypted_pre_master_secret
@@ -31,7 +31,7 @@ module Cryptcheck::Engine
 				describe '#write' do
 					it 'must write record' do
 						record = EncryptedPreMasterKeySecret.new encrypted_pre_master_secret.from_hex
-						record.write io
+						record.write nil, io
 						expect(io).to be_hex_written packet
 					end
 				end

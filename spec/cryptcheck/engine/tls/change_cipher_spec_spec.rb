@@ -6,21 +6,21 @@ module Cryptcheck::Engine
 			describe '::read' do
 				it 'must read record' do
 					io.init '01'
-					change_cipher_spec = klass.read io
+					change_cipher_spec = klass.read nil, io
 					expect(io).to be_read 1
 					expect(change_cipher_spec).to be_a ChangeCipherSpec
 				end
 
 				it 'must reject unexpected payload' do
 					io.init '02'
-					expect { klass.read io }.to raise_error ProtocolError, 'Expect change cipher spec payload to be 0x01, got 0x02'
+					expect { klass.read nil, io }.to raise_error ProtocolError, 'Expect change cipher spec payload to be 0x01, got 0x02'
 				end
 			end
 
 			describe '#write' do
 				it 'must write record' do
 					change_cipher_spec = klass.new
-					change_cipher_spec.write io
+					change_cipher_spec.write nil, io
 					expect(io).to be_hex_written '01'
 				end
 			end

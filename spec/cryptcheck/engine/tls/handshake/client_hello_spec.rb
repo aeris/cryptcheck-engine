@@ -34,7 +34,7 @@ module Cryptcheck::Engine
 				describe '::read' do
 					it 'must read record' do
 						io.init packet
-						record = klass.read io
+						record = klass.read nil, io
 						expect(io).to be_read 511
 						expect(record).to be_a ClientHello
 					end
@@ -54,7 +54,7 @@ module Cryptcheck::Engine
 							cipher :TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
 							extension Extension::ServerName.build 'cryptcheck.fr'
 						}
-						record.write io
+						record.write nil, io
 						expect(io).to be_hex_written <<~HEREDOC
 						    0303
 						    d2fd9f45420f2aee2f2066b1bf44f939a382ccf734277107412d091891aecbe4

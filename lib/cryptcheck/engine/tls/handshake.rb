@@ -27,7 +27,7 @@ module Cryptcheck::Engine
 					ClientKeyExchange, # 0x10
 			).freeze
 
-			def self.read(io)
+			def self.read(context, io)
 				tmp = io.read_uint8
 
 				type = TYPES[tmp]
@@ -35,13 +35,13 @@ module Cryptcheck::Engine
 
 				io.read_uint 3
 
-				record = type.read io
+				record = type.read context, io
 				self.new record
 			end
 
-			def write(io)
+			def write(context, io)
 				io2 = StringIO.new
-				@record.write io2
+				@record.write context, io2
 				io.write_uint8 @record.class::ID
 				io.write_data 3, io2.string
 			end

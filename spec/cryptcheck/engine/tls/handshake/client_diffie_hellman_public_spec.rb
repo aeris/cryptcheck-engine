@@ -10,7 +10,7 @@ module Cryptcheck::Engine
 				describe '::read' do
 					it 'must read record' do
 						io.init packet
-						record = klass.read io
+						record = klass.read nil, io
 						expect(io).to be_read 34
 						expect(record).to be_a ClientDiffieHellmanPublic
 						expect(record.public_key).to eq_hex public_key
@@ -20,7 +20,7 @@ module Cryptcheck::Engine
 				describe '#write' do
 					it 'must write record' do
 						record = ClientDiffieHellmanPublic.new public_key.from_hex
-						record.write io
+						record.write nil, io
 						expect(io).to be_hex_written packet
 					end
 				end

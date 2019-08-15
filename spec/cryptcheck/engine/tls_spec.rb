@@ -6,7 +6,7 @@ module Cryptcheck::Engine
 			describe '::read' do
 				it 'must read record' do
 					io.init '16 0300 0004 00 000000'
-					header, handshake = klass.read io
+					header, handshake = klass.read nil, io
 
 					expect(io).to be_read 9
 
@@ -23,7 +23,7 @@ module Cryptcheck::Engine
 				it 'must write record' do
 					handshake_record = Handshake::HelloRequest.new
 					record           = Handshake.new handshake_record
-					klass.write io, :ssl_3_0, record
+					klass.write nil, io, :ssl_3_0, record
 					expect(io).to be_hex_written '16 0300 0004 00 000000'
 				end
 			end

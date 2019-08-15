@@ -6,12 +6,12 @@ module Cryptcheck::Engine
 			end
 
 			class ClientEllipticCurveDiffieHellmanPublic < ClientKeyExchange
-				def self.read(io)
+				def self.read(_, io)
 					public_key = io.read_data :uint8
 					self.new public_key
 				end
 
-				def write(io)
+				def write(_, io)
 					io.write_data :uint8, @public_key
 				end
 
@@ -23,12 +23,12 @@ module Cryptcheck::Engine
 			end
 
 			class ClientDiffieHellmanPublic < ClientKeyExchange
-				def self.read(io)
+				def self.read(_, io)
 					public_key = io.read_data :uint16
 					self.new public_key
 				end
 
-				def write(io)
+				def write(_, io)
 					io.write_data :uint16, @public_key
 				end
 
@@ -40,12 +40,12 @@ module Cryptcheck::Engine
 			end
 
 			class EncryptedPreMasterKeySecret < ClientKeyExchange
-				def self.read(io)
+				def self.read(_, io)
 					encrypted_pre_master_secret = io.read_data :uint16
 					self.new encrypted_pre_master_secret
 				end
 
-				def write(io)
+				def write(_, io)
 					io.write_data :uint16, @encrypted_pre_master_secret
 				end
 

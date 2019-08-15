@@ -4,11 +4,11 @@ module Cryptcheck::Engine
 			class HelloRequest
 				ID = 0x00
 
-				def self.read(_)
+				def self.read(_, _)
 					self.new
 				end
 
-				def write(_)
+				def write(_, _)
 				end
 			end
 		end

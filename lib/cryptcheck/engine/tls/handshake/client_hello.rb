@@ -6,7 +6,7 @@ module Cryptcheck::Engine
 			class ClientHello
 				ID = 0x01
 
-				def self.read(io)
+				def self.read(_, io)
 					version      = Tls.read_version io
 					random       = io.read 32
 					session      = io.read_data :uint8
@@ -16,7 +16,7 @@ module Cryptcheck::Engine
 					self.new version, random, session, ciphers, compressions, extensions
 				end
 
-				def write(io)
+				def write(_, io)
 					Tls.write_version io, @version
 					io.write @random
 					io.write_data :uint8, @session

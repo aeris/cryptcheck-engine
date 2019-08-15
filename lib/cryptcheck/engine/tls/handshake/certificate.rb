@@ -4,7 +4,7 @@ module Cryptcheck::Engine
 			class Certificate
 				ID = 0x0B
 
-				def self.read(io)
+				def self.read(_, io)
 					length = io.read_uint 3
 					certs  = io.collect length do
 						der = io.read_data 3
@@ -13,7 +13,7 @@ module Cryptcheck::Engine
 					self.new certs
 				end
 
-				def write(io)
+				def write(_, io)
 					io2 = StringIO.new
 					@certificates.each { |c| io2.write_data 3, c.to_der }
 					io.write_data 3, io2.string

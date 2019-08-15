@@ -6,7 +6,7 @@ module Cryptcheck::Engine
 			end
 
 			class EcdhServerKeyExchange < ServerKeyExchange
-				def self.read(io, anonymous = false)
+				def self.read(_, io, anonymous = false)
 					curve_type = Tls.read_curve_type io
 					raise 'Unsupported curve type' unless curve_type == :named_curve
 
@@ -21,7 +21,7 @@ module Cryptcheck::Engine
 					self.new group, public_key, signature
 				end
 
-				def write(io)
+				def write(_, io)
 					Tls.write_curve_type io, :named_curve
 					Tls.write_group io, @group
 					io.write_data :uint8, @public_key
@@ -38,7 +38,7 @@ module Cryptcheck::Engine
 			end
 
 			class DhServerKeyExchange < ServerKeyExchange
-				def self.read(io, anonymous = false)
+				def self.read(_, io, anonymous = false)
 					p         = io.read_data :uint16
 					g         = io.read_data :uint16
 					ys        = io.read_data :uint16
@@ -46,7 +46,7 @@ module Cryptcheck::Engine
 					self.new p, g, ys, signature
 				end
 
-				def write(io)
+				def write(_, io)
 					io.write_data :uint16, @p
 					io.write_data :uint16, @g
 					io.write_data :uint16, @ys

@@ -7,7 +7,7 @@ module Cryptcheck::Engine
 				describe '::read' do
 					it 'must read record' do
 						io.init ''
-						record = klass.read io
+						record = klass.read nil, io
 						expect(io).to be_read 0
 						expect(record).to be_a HelloRequest
 					end
@@ -16,7 +16,7 @@ module Cryptcheck::Engine
 				describe '#write' do
 					it 'must write record' do
 						record = klass.new
-						record.write io
+						record.write nil, io
 						expect(io).to be_hex_written ''
 					end
 				end
