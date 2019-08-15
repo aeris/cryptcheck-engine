@@ -29,7 +29,6 @@ module Cryptcheck::Engine
 
 			def self.read(context, io)
 				tmp = io.read_uint8
-
 				type = TYPES[tmp]
 				raise ProtocolError, 'Unknown handshake type 0x%02X' % tmp unless type
 

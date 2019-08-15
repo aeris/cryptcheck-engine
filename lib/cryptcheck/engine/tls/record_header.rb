@@ -1,13 +1,12 @@
 module Cryptcheck::Engine
 	module Tls
 		class RecordHeader
-			# 0x14 => :change_cipher_spec
-			# 0x15 => :alert
 			# 0x17 => :application
 			# 0x18 => :heartbeat
 			CONTENT_TYPES = IdClasses.new(
 					Handshake, # 0x16
 					ChangeCipherSpec, # 0x14
+					Alert, # 0x15
 			).freeze
 
 			def self.read(_, io)
