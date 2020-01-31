@@ -16,9 +16,11 @@ steps:
     settings:
       host:
         from_secret: smtp.host
-      skip_verify: true
+      port:
+        from_secret: smtp.port
       from:
         from_secret: smtp.from
+      skip_verify: true
     when:
       status: [ changed, failure ]
       instance:
