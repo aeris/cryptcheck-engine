@@ -6,7 +6,7 @@ clone:
 
 steps:
   - name: test
-    image: aeris22/ruby:2.6-alpine
+    image: aeris22/ruby:2.7-alpine
     commands:
       - bundle install
       - rspec

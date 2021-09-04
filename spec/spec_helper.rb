@@ -5,7 +5,7 @@ Dir[File.join __dir__, 'fixtures', '*.rb'].each { |file| require file }
 require 'cryptcheck/engine'
 require 'cryptcheck/engine/mock_io'
 
-require 'awesome_print'
+require 'amazing_print'
 require 'colorize'
 require 'pry-byebug'
 require 'simplecov'

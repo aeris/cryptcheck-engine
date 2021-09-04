@@ -1,3 +1,4 @@
+require 'openssl'
 module Cryptcheck::Engine
 	module Tls
 		class Handshake
