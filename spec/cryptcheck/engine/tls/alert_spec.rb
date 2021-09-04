@@ -6,7 +6,7 @@ module Cryptcheck::Engine
       describe '::read' do
         it 'must read record' do
           io.init '01 0A'
-          alert = klass.read nil, io
+          alert = klass.read nil, io, nil
           expect(io).to be_read 2
           expect(alert).to be_a Alert
           expect(alert.level).to eq :warning
@@ -15,12 +15,12 @@ module Cryptcheck::Engine
 
         it 'must reject unknown level' do
           io.init 'FF 0A'
-          expect { klass.read nil, io }.to raise_error ProtocolError, 'Unknown alert level 0xFF'
+          expect { klass.read nil, io, nil }.to raise_error ProtocolError, 'Unknown alert level 0xFF'
         end
 
         it 'must reject unknown description' do
           io.init '01 FF'
-          expect { klass.read nil, io }.to raise_error ProtocolError, 'Unknown alert description 0xFF'
+          expect { klass.read nil, io, nil }.to raise_error ProtocolError, 'Unknown alert description 0xFF'
         end
       end
 

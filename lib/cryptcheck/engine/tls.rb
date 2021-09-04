@@ -582,7 +582,8 @@ module Cryptcheck::Engine
       raise ProtocolError, 'Unknown curve type %s' % type unless id
       io.write_uint8 id
     end
-    
+
+    autoload :Context, 'cryptcheck/engine/tls/context'
     autoload :RecordHeader, 'cryptcheck/engine/tls/record_header'
     autoload :Handshake, 'cryptcheck/engine/tls/handshake'
     autoload :ChangeCipherSpec, 'cryptcheck/engine/tls/change_cipher_spec'
@@ -591,15 +592,9 @@ module Cryptcheck::Engine
     autoload :Application, 'cryptcheck/engine/tls/application'
 
     def self.read(context, io)
-      header      = RecordHeader.read context, io
+      header = RecordHeader.read context, io
       record_type = header.type
-      record      =
-        case (record_type)
-        when Application
-          record_type.read context, io, header.length
-        else
-          record_type.read context, io
-        end
+      record = record_type.read context, io, header.length
       raise AlertError, record if record.is_a? Alert
       [header, record]
     end

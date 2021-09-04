@@ -42,7 +42,7 @@ module Cryptcheck::Engine
         @description = description
       end
 
-      def self.read(_, io)
+      def self.read(_, io, _)
         tmp   = io.read_uint8
         level = LEVELS[tmp]
         raise ProtocolError, 'Unknown alert level 0x%02X' % tmp unless level

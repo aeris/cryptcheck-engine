@@ -7,6 +7,7 @@ module Cryptcheck::Engine
         Handshake, # 0x16
         ChangeCipherSpec, # 0x14
         Alert, # 0x15
+        Application, # 0x17
       ).freeze
 
       def self.read(_, io)

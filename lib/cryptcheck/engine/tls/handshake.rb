@@ -27,7 +27,7 @@ module Cryptcheck::Engine
         ClientKeyExchange, # 0x10
       ).freeze
 
-      def self.read(context, io)
+      def self.read(context, io, _)
         tmp  = io.read_uint8
         type = TYPES[tmp]
         raise ProtocolError, 'Unknown handshake type 0x%02X' % tmp unless type
