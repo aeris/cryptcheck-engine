@@ -1,3 +1,2 @@
-class StringIO
-	include Cryptcheck::Engine::Buffer
-end
+require 'stringio'
+StringIO.include Cryptcheck::Engine::Buffer
