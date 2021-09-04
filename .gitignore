@@ -1,11 +1,2 @@
 /.bundle/
-/.yardoc
-/_yardoc/
-/coverage/
-/doc/
-/pkg/
-/spec/reports/
 /tmp/
-
-.rspec_status
-.rspec_results
